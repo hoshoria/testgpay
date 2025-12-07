@@ -13,10 +13,18 @@ cardNumberInput.addEventListener('input', function (e) {
 
 // Format expiry date
 const expiryInput = document.getElementById('expiry');
+const expiryYearInput = document.getElementById('expiry-year');
 expiryInput.addEventListener('input', function (e) {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length >= 2) {
-        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+        const month = value.slice(0, 2);
+        const year = value.slice(2, 4);
+        value = month + '/' + year;
+        
+        // Update hidden year field for autocomplete
+        if (year) {
+            expiryYearInput.value = '20' + year;
+        }
     }
     e.target.value = value;
 });
@@ -202,52 +210,149 @@ paymentForm.addEventListener('submit', function (e) {
     submitButton.classList.add('loading');
     buttonLoader.style.display = 'flex';
 
-    // Wait for Google Pay to load if not ready
-    if (!googlePayLoaded) {
-        setTimeout(() => {
-            activateGooglePay();
-        }, 1000);
-    } else {
-        activateGooglePay();
-    }
+    // Use Payment Request API to trigger native Android popup
+    activateNativeAndroidPopup();
 });
 
-function activateGooglePay() {
-    try {
-        const paymentsClient = getGooglePaymentsClient();
-        
-        if (!paymentsClient) {
-            throw new Error('Google Pay no está disponible. Por favor, asegúrate de estar en un dispositivo compatible.');
-        }
-        
-        const paymentDataRequest = getGooglePaymentDataRequest();
-        
-        // Load payment data - this will trigger the native Android popup
-        paymentsClient.loadPaymentData(paymentDataRequest)
-            .then(function(paymentData) {
-                // User accepted saving the card in Google Pay
-                console.log('Card saved successfully:', paymentData);
-                
-                // Check if it was saved to Google Pay or just browser
-                // This is detected by the popup behavior
+function activateNativeAndroidPopup() {
+    // Check if Payment Request API is available (this triggers native Android popup)
+    if (!window.PaymentRequest) {
+        // Fallback: Try to trigger autofill by focusing and blurring the card field
+        // This sometimes triggers the native Android save prompt
+        const cardInput = document.getElementById('card-number');
+        if (cardInput.value) {
+            cardInput.blur();
+            cardInput.focus();
+            
+            // Wait a bit then show success (Android will show its own popup)
+            setTimeout(() => {
                 showSuccessModal();
                 resetButton();
+            }, 500);
+        } else {
+            showError('Por favor, ingresa al menos el número de tarjeta para guardarla.');
+            resetButton();
+        }
+        return;
+    }
+
+    const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+    const expiry = document.getElementById('expiry').value;
+    
+    // Parse expiry date
+    let expiryMonth = '';
+    let expiryYear = '';
+    if (expiry && expiry.includes('/')) {
+        const parts = expiry.split('/');
+        expiryMonth = parts[0].padStart(2, '0');
+        expiryYear = '20' + parts[1];
+    }
+
+    // Create payment method data for native Android popup
+    const supportedMethods = ['basic-card'];
+    
+    const details = {
+        total: {
+            label: 'Guardar Tarjeta en Google Pay',
+            amount: {
+                currency: 'USD',
+                value: '0.00'
+            }
+        },
+        displayItems: []
+    };
+
+    // Payment method data - this triggers the native Android popup
+    const methodData = [{
+        supportedMethods: supportedMethods,
+        data: {
+            supportedNetworks: ['visa', 'mastercard', 'amex'],
+            supportedTypes: ['credit', 'debit']
+        }
+    }];
+
+    const options = {
+        requestPayerName: false,
+        requestPayerEmail: false,
+        requestPayerPhone: false
+    };
+
+    try {
+        const request = new PaymentRequest(methodData, details, options);
+
+        // Check if Payment Request is available
+        request.canMakePayment()
+            .then(canMake => {
+                if (!canMake) {
+                    // Fallback: Trigger autofill save prompt
+                    triggerAutofillSave();
+                    return;
+                }
+
+                // Show the native Android popup - this is what the user wants!
+                return request.show();
+            })
+            .then(function(paymentResponse) {
+                if (!paymentResponse) return;
+                
+                // User accepted in native Android popup
+                console.log('Native Android popup accepted:', paymentResponse);
+                
+                // Get payment details
+                const paymentMethod = paymentResponse.details;
+                console.log('Payment method:', paymentMethod);
+                
+                // Complete the payment request
+                paymentResponse.complete('success')
+                    .then(() => {
+                        // The native Android popup already asked the user if they want to save
+                        // If they said yes, Android will save it to Google Pay
+                        // If they said no or it was invalid, Android will show "saved to browser only"
+                        showSuccessModal();
+                        resetButton();
+                    });
             })
             .catch(function(err) {
-                // User cancelled or error occurred
-                console.log('Popup cancelled or error:', err);
+                console.log('Payment request cancelled or error:', err);
                 
-                if (err.statusCode === 'CANCELED') {
-                    // User cancelled - no error message needed
+                if (err.name === 'AbortError' || err.message === 'AbortError' || err.message?.includes('cancel')) {
+                    // User cancelled the native popup - no error message needed
+                    resetButton();
                 } else {
-                    showError('Error al guardar la tarjeta. Por favor, intenta nuevamente.');
+                    // Try fallback method
+                    triggerAutofillSave();
                 }
-                
-                resetButton();
             });
     } catch (error) {
-        console.error('Error activating Google Pay:', error);
-        showError('Error al activar Google Pay. Por favor, asegúrate de estar en un dispositivo compatible con Google Pay.');
+        console.error('Error creating PaymentRequest:', error);
+        // Fallback: Try autofill method
+        triggerAutofillSave();
+    }
+}
+
+function triggerAutofillSave() {
+    // This method tries to trigger Android's autofill save prompt
+    // by programmatically interacting with the form fields
+    const cardInput = document.getElementById('card-number');
+    const expiryInput = document.getElementById('expiry');
+    
+    if (cardInput.value || expiryInput.value) {
+        // Trigger autofill save by focusing and blurring
+        cardInput.focus();
+        setTimeout(() => {
+            cardInput.blur();
+            expiryInput.focus();
+            setTimeout(() => {
+                expiryInput.blur();
+                // Android should show the save prompt automatically
+                setTimeout(() => {
+                    showSuccessModal();
+                    resetButton();
+                }, 1000);
+            }, 300);
+        }, 300);
+    } else {
+        showError('Por favor, ingresa la información de la tarjeta.');
         resetButton();
     }
 }

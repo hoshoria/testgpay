@@ -40,7 +40,7 @@
                             </label>
                             <div class="input-wrapper">
                                 <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456"
-                                    maxlength="19" autocomplete="cc-number">
+                                    maxlength="19" autocomplete="cc-number" inputmode="numeric">
                                 <div class="card-brands">
                                     <i class="fab fa-cc-visa"></i>
                                     <i class="fab fa-cc-mastercard"></i>
@@ -54,8 +54,11 @@
                                 <i class="far fa-calendar-alt"></i>
                                 Fecha de Vencimiento
                             </label>
-                            <input type="text" id="expiry" name="expiry" placeholder="MM/AA" maxlength="5" autocomplete="cc-exp">
+                            <input type="text" id="expiry" name="expiry" placeholder="MM/AA" maxlength="5" autocomplete="cc-exp-month">
                         </div>
+                        
+                        <!-- Hidden field for year to help Android detect the form -->
+                        <input type="hidden" id="expiry-year" autocomplete="cc-exp-year">
                     </div>
 
                     <button type="submit" class="submit-button" id="submit-button">
