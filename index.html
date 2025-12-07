@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasarela de Pagos - Checkout Seguro</title>
+    <meta name="description" content="Plataforma de pagos segura con Google Pay integrado">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="payment-wrapper">
+            <!-- Payment Form -->
+            <div class="payment-form">
+                <div class="form-header">
+                    <h1>Guardar Tarjeta</h1>
+                    <p>Guarda tu tarjeta en Google Pay de forma segura</p>
+                </div>
+
+                <!-- Payment Form -->
+                <form id="payment-form" class="form">
+                    <div class="form-section">
+                        <h3>Agregar Tarjeta</h3>
+                        <div class="form-group">
+                            <label for="card-number">Número de Tarjeta</label>
+                            <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456"
+                                maxlength="19">
+                            <div class="card-icons">
+                                <span class="card-icon">💳</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expiry">Fecha de Vencimiento</label>
+                            <input type="text" id="expiry" name="expiry" placeholder="MM/AA" maxlength="5">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button" id="submit-button">
+                        <span class="button-text">Guardar en Google Pay</span>
+                        <span class="button-icon">💳</span>
+                    </button>
+
+                    <div class="form-footer">
+                        <p>🔒 Tu tarjeta se guardará de forma segura</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credits -->
+    <div class="credits">
+        <p>Creado para Unknown Cards</p>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">✓</div>
+            <h2>¡Tarjeta Guardada!</h2>
+            <p>Tu tarjeta se ha guardado exitosamente en Google Pay</p>
+            <button class="modal-button" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
