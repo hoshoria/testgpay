@@ -13,18 +13,12 @@ cardNumberInput.addEventListener('input', function (e) {
 
 // Format expiry date
 const expiryInput = document.getElementById('expiry');
-const expiryYearInput = document.getElementById('expiry-year');
 expiryInput.addEventListener('input', function (e) {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length >= 2) {
         const month = value.slice(0, 2);
         const year = value.slice(2, 4);
         value = month + '/' + year;
-        
-        // Update hidden year field for autocomplete
-        if (year) {
-            expiryYearInput.value = '20' + year;
-        }
     }
     e.target.value = value;
 });
@@ -60,14 +54,8 @@ const baseRequest = {
 const allowedCardNetworks = ["MASTERCARD", "VISA", "AMEX"];
 const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
 
-// Use PAYMENT_GATEWAY for card saving (works better for saving cards)
-const tokenizationSpecification = {
-    type: 'PAYMENT_GATEWAY',
-    parameters: {
-        gateway: 'example',
-        gatewayMerchantId: 'exampleGatewayMerchantId'
-    }
-};
+// Payment Request API doesn't require tokenization for card saving
+// The native Android popup handles the saving automatically
 
 const baseCardPaymentMethod = {
     type: 'CARD',
@@ -127,7 +115,7 @@ function getGooglePaymentDataRequest() {
 function getGooglePaymentsClient() {
     if (paymentsClient === null && typeof google !== 'undefined' && google.payments) {
         paymentsClient = new google.payments.api.PaymentsClient({
-            environment: 'TEST', // Use TEST for development, change to PRODUCTION for real cards
+            environment: 'PRODUCTION',
             paymentDataCallbacks: {
                 onPaymentAuthorized: onPaymentAuthorized
             }
@@ -215,142 +203,109 @@ paymentForm.addEventListener('submit', function (e) {
 });
 
 function activateNativeAndroidPopup() {
-    // Check if Payment Request API is available (this triggers native Android popup)
-    if (!window.PaymentRequest) {
-        // Fallback: Try to trigger autofill by focusing and blurring the card field
-        // This sometimes triggers the native Android save prompt
-        const cardInput = document.getElementById('card-number');
-        if (cardInput.value) {
-            cardInput.blur();
-            cardInput.focus();
-            
-            // Wait a bit then show success (Android will show its own popup)
-            setTimeout(() => {
-                showSuccessModal();
-                resetButton();
-            }, 500);
-        } else {
-            showError('Por favor, ingresa al menos el número de tarjeta para guardarla.');
-            resetButton();
-        }
-        return;
-    }
-
+    // The native Android popup appears automatically when the form is submitted
+    // with proper autocomplete attributes. We just need to let the browser handle it.
+    // However, we can also use Payment Request API as a trigger.
+    
     const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
     const expiry = document.getElementById('expiry').value;
     
-    // Parse expiry date
-    let expiryMonth = '';
-    let expiryYear = '';
-    if (expiry && expiry.includes('/')) {
-        const parts = expiry.split('/');
-        expiryMonth = parts[0].padStart(2, '0');
-        expiryYear = '20' + parts[1];
+    if (!cardNumber && !expiry) {
+        showError('Por favor, ingresa la información de la tarjeta.');
+        resetButton();
+        return;
     }
 
-    // Create payment method data for native Android popup
-    const supportedMethods = ['basic-card'];
-    
-    const details = {
-        total: {
-            label: 'Guardar Tarjeta en Google Pay',
-            amount: {
-                currency: 'USD',
-                value: '0.00'
+    // Method 1: Use Payment Request API if available (triggers native Android popup)
+    if (window.PaymentRequest) {
+        const supportedMethods = ['basic-card'];
+        
+        const details = {
+            total: {
+                label: 'Guardar Tarjeta',
+                amount: {
+                    currency: 'USD',
+                    value: '0.01'  // Small amount to trigger the save prompt
+                }
             }
-        },
-        displayItems: []
-    };
+        };
 
-    // Payment method data - this triggers the native Android popup
-    const methodData = [{
-        supportedMethods: supportedMethods,
-        data: {
-            supportedNetworks: ['visa', 'mastercard', 'amex'],
-            supportedTypes: ['credit', 'debit']
-        }
-    }];
+        const methodData = [{
+            supportedMethods: supportedMethods,
+            data: {
+                supportedNetworks: ['visa', 'mastercard', 'amex', 'discover'],
+                supportedTypes: ['credit', 'debit']
+            }
+        }];
 
-    const options = {
-        requestPayerName: false,
-        requestPayerEmail: false,
-        requestPayerPhone: false
-    };
+        const options = {
+            requestPayerName: false,
+            requestPayerEmail: false,
+            requestPayerPhone: false
+        };
 
-    try {
-        const request = new PaymentRequest(methodData, details, options);
+        try {
+            const request = new PaymentRequest(methodData, details, options);
 
-        // Check if Payment Request is available
-        request.canMakePayment()
-            .then(canMake => {
-                if (!canMake) {
-                    // Fallback: Trigger autofill save prompt
-                    triggerAutofillSave();
-                    return;
-                }
-
-                // Show the native Android popup - this is what the user wants!
-                return request.show();
-            })
-            .then(function(paymentResponse) {
-                if (!paymentResponse) return;
-                
-                // User accepted in native Android popup
-                console.log('Native Android popup accepted:', paymentResponse);
-                
-                // Get payment details
-                const paymentMethod = paymentResponse.details;
-                console.log('Payment method:', paymentMethod);
-                
-                // Complete the payment request
-                paymentResponse.complete('success')
-                    .then(() => {
-                        // The native Android popup already asked the user if they want to save
-                        // If they said yes, Android will save it to Google Pay
-                        // If they said no or it was invalid, Android will show "saved to browser only"
-                        showSuccessModal();
+            request.canMakePayment()
+                .then(canMake => {
+                    if (canMake) {
+                        // Show native Android popup
+                        return request.show();
+                    } else {
+                        // Fallback to autofill method
+                        triggerAutofillSave();
+                    }
+                })
+                .then(function(paymentResponse) {
+                    if (!paymentResponse) return;
+                    
+                    // User interacted with native popup
+                    paymentResponse.complete('success')
+                        .then(() => {
+                            showSuccessModal();
+                            resetButton();
+                        });
+                })
+                .catch(function(err) {
+                    if (err.name !== 'AbortError') {
+                        // Try autofill method as fallback
+                        triggerAutofillSave();
+                    } else {
                         resetButton();
-                    });
-            })
-            .catch(function(err) {
-                console.log('Payment request cancelled or error:', err);
-                
-                if (err.name === 'AbortError' || err.message === 'AbortError' || err.message?.includes('cancel')) {
-                    // User cancelled the native popup - no error message needed
-                    resetButton();
-                } else {
-                    // Try fallback method
-                    triggerAutofillSave();
-                }
-            });
-    } catch (error) {
-        console.error('Error creating PaymentRequest:', error);
-        // Fallback: Try autofill method
+                    }
+                });
+        } catch (error) {
+            triggerAutofillSave();
+        }
+    } else {
+        // Method 2: Trigger Android autofill save prompt
         triggerAutofillSave();
     }
 }
 
 function triggerAutofillSave() {
-    // This method tries to trigger Android's autofill save prompt
-    // by programmatically interacting with the form fields
+    // This method relies on Android's autofill service to detect the form
+    // and show the native "Save card" popup automatically
+    // The form already has proper autocomplete attributes, so Android will detect it
+    
     const cardInput = document.getElementById('card-number');
     const expiryInput = document.getElementById('expiry');
     
+    // Submit the form normally - Android will intercept and show the save prompt
+    // We prevent default and manually trigger the autofill save flow
     if (cardInput.value || expiryInput.value) {
-        // Trigger autofill save by focusing and blurring
-        cardInput.focus();
+        // Blur the inputs to trigger Android's autofill detection
+        cardInput.blur();
+        expiryInput.blur();
+        
+        // Android Chrome will automatically show the "Save card?" popup
+        // after detecting the form fields with autocomplete attributes
+        // We wait a moment for the popup to appear, then show our success modal
         setTimeout(() => {
-            cardInput.blur();
-            expiryInput.focus();
-            setTimeout(() => {
-                expiryInput.blur();
-                // Android should show the save prompt automatically
-                setTimeout(() => {
-                    showSuccessModal();
-                    resetButton();
-                }, 1000);
-            }, 300);
-        }, 300);
+            showSuccessModal();
+            resetButton();
+        }, 1500);
     } else {
         showError('Por favor, ingresa la información de la tarjeta.');
         resetButton();
