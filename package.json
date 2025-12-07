@@ -1,0 +1,20 @@
+{
+  "name": "payment-platform",
+  "version": "1.0.0",
+  "description": "Plataforma de guardado de tarjetas con Google Pay",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "payment",
+    "google-pay",
+    "cards"
+  ],
+  "author": "Unknown Cards",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.x"
+  }
+}
+
