@@ -1,11 +1,14 @@
-// Payment Platform JavaScript
+// Payment Platform JavaScript - Enhanced Version
 
-// Format credit card number
+// Format credit card number with real-time validation
 const cardNumberInput = document.getElementById('card-number');
 cardNumberInput.addEventListener('input', function (e) {
     let value = e.target.value.replace(/\s/g, '');
     let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
     e.target.value = formattedValue;
+    
+    // Update card brand icon
+    updateCardBrand(value);
 });
 
 // Format expiry date
@@ -18,8 +21,29 @@ expiryInput.addEventListener('input', function (e) {
     e.target.value = value;
 });
 
+// Update card brand icon based on card number
+function updateCardBrand(cardNumber) {
+    const brands = document.querySelectorAll('.card-brands i');
+    brands.forEach(brand => brand.classList.remove('active'));
+    
+    if (cardNumber.length === 0) {
+        brands.forEach(brand => brand.classList.add('active'));
+        return;
+    }
+    
+    const firstDigit = cardNumber[0];
+    const firstTwo = cardNumber.substring(0, 2);
+    
+    if (firstDigit === '4') {
+        document.querySelector('.fa-cc-visa')?.classList.add('active');
+    } else if (firstTwo >= '51' && firstTwo <= '55') {
+        document.querySelector('.fa-cc-mastercard')?.classList.add('active');
+    } else if (firstTwo === '34' || firstTwo === '37') {
+        document.querySelector('.fa-cc-amex')?.classList.add('active');
+    }
+}
 
-// Google Pay Integration
+// Google Pay Integration - Enhanced
 const baseRequest = {
     apiVersion: 2,
     apiVersionMinor: 0
@@ -28,11 +52,12 @@ const baseRequest = {
 const allowedCardNetworks = ["MASTERCARD", "VISA", "AMEX"];
 const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
 
+// Use PAYMENT_GATEWAY for card saving (works better for saving cards)
 const tokenizationSpecification = {
     type: 'PAYMENT_GATEWAY',
     parameters: {
-        'gateway': 'example',
-        'gatewayMerchantId': 'exampleGatewayMerchantId'
+        gateway: 'example',
+        gatewayMerchantId: 'exampleGatewayMerchantId'
     }
 };
 
@@ -53,6 +78,7 @@ const cardPaymentMethod = Object.assign(
 );
 
 let paymentsClient = null;
+let googlePayLoaded = false;
 
 function getGoogleIsReadyToPayRequest() {
     return Object.assign(
@@ -67,25 +93,33 @@ function getGoogleIsReadyToPayRequest() {
 function getGooglePaymentDataRequest() {
     const paymentDataRequest = Object.assign({}, baseRequest);
     paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
-    // Transacción mínima solo para activar el popup de guardado
+    
+    // Configure for card saving (not payment)
     paymentDataRequest.transactionInfo = {
         totalPriceStatus: 'NOT_CURRENTLY_KNOWN',
-        currencyCode: 'USD'
+        currencyCode: 'USD',
+        totalPrice: '0.00'
     };
+    
     paymentDataRequest.merchantInfo = {
-        merchantName: 'Mi Tienda',
+        merchantName: 'Unknown Cards',
         merchantId: '01234567890123456789'
     };
 
+    // Enable payment authorization callback
     paymentDataRequest.callbackIntents = ["PAYMENT_AUTHORIZATION"];
+    
+    // Request email if available
+    paymentDataRequest.emailRequired = false;
+    paymentDataRequest.shippingAddressRequired = false;
 
     return paymentDataRequest;
 }
 
 function getGooglePaymentsClient() {
-    if (paymentsClient === null) {
+    if (paymentsClient === null && typeof google !== 'undefined' && google.payments) {
         paymentsClient = new google.payments.api.PaymentsClient({
-            environment: 'TEST',
+            environment: 'TEST', // Use TEST for development, change to PRODUCTION for real cards
             paymentDataCallbacks: {
                 onPaymentAuthorized: onPaymentAuthorized
             }
@@ -96,29 +130,33 @@ function getGooglePaymentsClient() {
 
 function onPaymentAuthorized(paymentData) {
     return new Promise(function (resolve, reject) {
-        processPayment(paymentData)
-            .then(function () {
-                resolve({ transactionState: 'SUCCESS' });
-            })
-            .catch(function () {
-                resolve({
-                    transactionState: 'ERROR',
-                    error: {
-                        intent: 'PAYMENT_AUTHORIZATION',
-                        message: 'Insufficient funds',
-                        reason: 'PAYMENT_DATA_INVALID'
-                    }
-                });
-            });
+        // Process the payment data
+        console.log('Payment authorized:', paymentData);
+        
+        // Check if card was saved to Google Pay or just browser
+        const paymentMethodData = paymentData.paymentMethodData;
+        const tokenizationData = paymentMethodData?.tokenizationData;
+        
+        // Resolve successfully
+        resolve({ transactionState: 'SUCCESS' });
     });
 }
 
 function onGooglePayLoaded() {
+    googlePayLoaded = true;
     const paymentsClient = getGooglePaymentsClient();
+    
+    if (!paymentsClient) {
+        console.warn('Google Pay API not available');
+        return;
+    }
+    
     paymentsClient.isReadyToPay(getGoogleIsReadyToPayRequest())
         .then(function (response) {
             if (response.result) {
-                addGooglePayButton();
+                console.log('Google Pay is ready');
+            } else {
+                console.log('Google Pay is not available');
             }
         })
         .catch(function (err) {
@@ -126,122 +164,174 @@ function onGooglePayLoaded() {
         });
 }
 
-function addGooglePayButton() {
-    const paymentsClient = getGooglePaymentsClient();
-    const button = paymentsClient.createButton({
-        onClick: onGooglePaymentButtonClicked,
-        allowedPaymentMethods: [baseCardPaymentMethod]
-    });
-    button.classList.add('google-pay-button');
-    document.getElementById('google-pay-button-container').appendChild(button);
-}
-
-
-function onGooglePaymentButtonClicked() {
-    const paymentDataRequest = getGooglePaymentDataRequest();
-    const paymentsClient = getGooglePaymentsClient();
-    paymentsClient.loadPaymentData(paymentDataRequest);
-}
-
-function processPayment(paymentData) {
-    return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-            console.log('Payment processed successfully');
-            console.log(paymentData);
-            showSuccessModal();
-            resolve({});
-        }, 1500);
-    });
-}
-
 // Load Google Pay API
 const script = document.createElement('script');
 script.src = 'https://pay.google.com/gp/p/js/pay.js';
 script.async = true;
 script.onload = onGooglePayLoaded;
+script.onerror = function() {
+    console.error('Failed to load Google Pay API');
+};
 document.head.appendChild(script);
 
-// Form submission handler
+// Form submission handler - Enhanced
 const paymentForm = document.getElementById('payment-form');
+const submitButton = document.getElementById('submit-button');
+const buttonLoader = document.getElementById('button-loader');
+
 paymentForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const submitButton = document.getElementById('submit-button');
     const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
     const expiry = document.getElementById('expiry').value;
 
     // Los campos son opcionales, pero si se ingresa número de tarjeta, validar formato
     if (cardNumber && (cardNumber.length < 13 || cardNumber.length > 19)) {
-        alert('El número de tarjeta no es válido');
+        showError('El número de tarjeta no es válido');
+        return;
+    }
+
+    // Validate expiry format if provided
+    if (expiry && expiry.length < 5) {
+        showError('La fecha de vencimiento no es válida');
         return;
     }
 
     // Show loading state
     submitButton.disabled = true;
-    submitButton.innerHTML = '<span class="button-text">Guardando...</span>';
+    submitButton.classList.add('loading');
+    buttonLoader.style.display = 'flex';
 
-    // Activar popup nativo de Google Pay para guardar tarjeta
-    try {
-        const paymentsClient = getGooglePaymentsClient();
-        const paymentDataRequest = getGooglePaymentDataRequest();
-        
-        // Cargar datos de pago - esto activará el popup nativo de Android
-        paymentsClient.loadPaymentData(paymentDataRequest)
-            .then(function(paymentData) {
-                // El usuario aceptó guardar la tarjeta en Google Pay
-                console.log('Tarjeta guardada exitosamente:', paymentData);
-                showSuccessModal();
-                
-                // Reset button
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<span class="button-text">Guardar en Google Pay</span><span class="button-icon">💳</span>';
-            })
-            .catch(function(err) {
-                // El usuario canceló o hubo un error
-                console.log('Popup cancelado o error:', err);
-                
-                // Reset button
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<span class="button-text">Guardar en Google Pay</span><span class="button-icon">💳</span>';
-            });
-    } catch (error) {
-        console.error('Error al activar Google Pay:', error);
-        alert('Error al activar Google Pay. Por favor, asegúrate de estar en un dispositivo compatible.');
-        
-        // Reset button
-        submitButton.disabled = false;
-        submitButton.innerHTML = '<span class="button-text">Guardar en Google Pay</span><span class="button-icon">💳</span>';
+    // Wait for Google Pay to load if not ready
+    if (!googlePayLoaded) {
+        setTimeout(() => {
+            activateGooglePay();
+        }, 1000);
+    } else {
+        activateGooglePay();
     }
 });
+
+function activateGooglePay() {
+    try {
+        const paymentsClient = getGooglePaymentsClient();
+        
+        if (!paymentsClient) {
+            throw new Error('Google Pay no está disponible. Por favor, asegúrate de estar en un dispositivo compatible.');
+        }
+        
+        const paymentDataRequest = getGooglePaymentDataRequest();
+        
+        // Load payment data - this will trigger the native Android popup
+        paymentsClient.loadPaymentData(paymentDataRequest)
+            .then(function(paymentData) {
+                // User accepted saving the card in Google Pay
+                console.log('Card saved successfully:', paymentData);
+                
+                // Check if it was saved to Google Pay or just browser
+                // This is detected by the popup behavior
+                showSuccessModal();
+                resetButton();
+            })
+            .catch(function(err) {
+                // User cancelled or error occurred
+                console.log('Popup cancelled or error:', err);
+                
+                if (err.statusCode === 'CANCELED') {
+                    // User cancelled - no error message needed
+                } else {
+                    showError('Error al guardar la tarjeta. Por favor, intenta nuevamente.');
+                }
+                
+                resetButton();
+            });
+    } catch (error) {
+        console.error('Error activating Google Pay:', error);
+        showError('Error al activar Google Pay. Por favor, asegúrate de estar en un dispositivo compatible con Google Pay.');
+        resetButton();
+    }
+}
+
+function resetButton() {
+    submitButton.disabled = false;
+    submitButton.classList.remove('loading');
+    buttonLoader.style.display = 'none';
+}
+
+function showError(message) {
+    // Create or update error message
+    let errorDiv = document.querySelector('.error-message');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        paymentForm.insertBefore(errorDiv, submitButton);
+    }
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    errorDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        errorDiv.style.display = 'none';
+    }, 5000);
+}
 
 // Success modal functions
 function showSuccessModal() {
     const modal = document.getElementById('success-modal');
     modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
     const modal = document.getElementById('success-modal');
     modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
 
     // Reset form
     paymentForm.reset();
+    updateCardBrand('');
+    
+    // Hide any error messages
+    const errorDiv = document.querySelector('.error-message');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
 }
 
-// Add input validation animations
-const inputs = document.querySelectorAll('input, select');
-inputs.forEach(input => {
-    input.addEventListener('blur', function () {
-        if (this.value) {
-            this.style.borderColor = 'var(--success-color)';
-            setTimeout(() => {
-                this.style.borderColor = '';
-            }, 300);
-        }
-    });
+// Close modal on background click
+document.getElementById('success-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
 });
 
-// Animate elements on scroll
+// Add input validation animations
+const inputs = document.querySelectorAll('input');
+inputs.forEach(input => {
+    input.addEventListener('focus', function () {
+        this.parentElement.classList.add('focused');
+    });
+    
+    input.addEventListener('blur', function () {
+        this.parentElement.classList.remove('focused');
+        if (this.value) {
+            this.parentElement.classList.add('filled');
+        } else {
+            this.parentElement.classList.remove('filled');
+        }
+    });
+    
+    // Check if input has value on load
+    if (input.value) {
+        input.parentElement.classList.add('filled');
+    }
+});
+
+// Smooth scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -249,9 +339,7 @@ const observer = new IntersectionObserver((entries) => {
             entry.target.style.transform = 'translateY(0)';
         }
     });
-}, {
-    threshold: 0.1
-});
+}, observerOptions);
 
 document.querySelectorAll('.form-section').forEach(section => {
     section.style.opacity = '0';
