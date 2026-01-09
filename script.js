@@ -602,13 +602,11 @@ script.onerror = function () {
 };
 document.head.appendChild(script);
 
-// Initialize all systems when DOM is ready
+// Initialize menu system when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
-        initThemeSystem();
         initMenuSystem();
     });
 } else {
-    initThemeSystem();
     initMenuSystem();
 }
