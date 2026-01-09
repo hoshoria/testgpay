@@ -446,8 +446,8 @@ const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
 const tokenizationSpecification = {
     type: 'PAYMENT_GATEWAY',
     parameters: {
-        'gateway': 'example',
-        'gatewayMerchantId': 'exampleGatewayMerchantId'
+        'gateway': 'shopify',
+        'gatewayMerchantId': 'yonawest.myshopify.com'
     }
 };
 
@@ -488,7 +488,7 @@ function getGooglePaymentDataRequest() {
     };
     paymentDataRequest.merchantInfo = {
         merchantName: 'Unknown Cards',
-        merchantId: '01234567890123456789'
+        merchantId: 'BCR2DN4TZRY6EQKJ'
     };
 
     paymentDataRequest.callbackIntents = ["PAYMENT_AUTHORIZATION"];
