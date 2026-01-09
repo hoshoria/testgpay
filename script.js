@@ -499,7 +499,7 @@ function getGooglePaymentDataRequest() {
 function getGooglePaymentsClient() {
     if (paymentsClient === null && typeof google !== 'undefined' && google.payments) {
         paymentsClient = new google.payments.api.PaymentsClient({
-            environment: 'TEST',
+            environment: 'PRODUCTION',
             paymentDataCallbacks: {
                 onPaymentAuthorized: onPaymentAuthorized
             }
