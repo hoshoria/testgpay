@@ -1246,6 +1246,46 @@ body::before {
     align-items: center;
 }
 
+/* Custom Google Pay Button */
+.custom-gpay-button {
+    width: 100%;
+    min-height: 60px;
+    background: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.custom-gpay-button:hover {
+    background: #3c4043;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.custom-gpay-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.custom-gpay-button .gpay-logo {
+    height: 20px;
+    width: auto;
+}
+
+.custom-gpay-button .gpay-text {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+}
+
 /* Custom Google Pay Button Styling */
 .gpay-button-container button {
     width: 100%;
