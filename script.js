@@ -218,7 +218,7 @@ function initRedirectButton() {
         window.open(checkoutUrl, '_blank');
     });
 }
-}
+
 
 // ============================================
 // PAYMENT FORM LOGIC (Add Card View)
