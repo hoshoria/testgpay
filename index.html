@@ -14,6 +14,47 @@
 </head>
 
 <body>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <span class="theme-switcher-label">
+            <i class="fas fa-palette"></i>
+            Theme
+        </span>
+        <div class="theme-selector">
+            <button class="theme-button" id="theme-button" aria-label="Select theme">
+                <i class="fas fa-moon"></i>
+                <span id="current-theme-name">Dark</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="theme-dropdown" id="theme-dropdown">
+                <div class="theme-option active" data-theme="dark">
+                    <i class="fas fa-moon theme-icon-dark"></i>
+                    <span>Dark</span>
+                </div>
+                <div class="theme-option" data-theme="light">
+                    <i class="fas fa-sun theme-icon-light"></i>
+                    <span>Light</span>
+                </div>
+                <div class="theme-option" data-theme="blue">
+                    <i class="fas fa-water theme-icon-blue"></i>
+                    <span>Blue</span>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                    <i class="fas fa-gem theme-icon-purple"></i>
+                    <span>Purple</span>
+                </div>
+                <div class="theme-option" data-theme="green">
+                    <i class="fas fa-leaf theme-icon-green"></i>
+                    <span>Green</span>
+                </div>
+                <div class="theme-option" data-theme="ocean">
+                    <i class="fas fa-fish theme-icon-ocean"></i>
+                    <span>Ocean</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="payment-wrapper">
             <!-- Payment Form -->

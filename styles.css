@@ -1,5 +1,10 @@
-/* Modern Payment Platform Styles - Enhanced */
+/* Modern Payment Platform Styles - Multi-Theme Support */
 
+/* ============================================
+   THEME SYSTEM - CSS CUSTOM PROPERTIES
+   ============================================ */
+
+/* Default Theme Variables (Dark) */
 :root {
     --primary-color: #6366f1;
     --primary-dark: #4f46e5;
@@ -22,6 +27,125 @@
     --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
+/* Light Theme */
+body.theme-light {
+    --primary-color: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #6366f1;
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --error-color: #dc2626;
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-light: #f1f5f9;
+    --surface-hover: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #cbd5e1;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-lg: rgba(0, 0, 0, 0.15);
+    --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --gradient-success: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+/* Blue Theme */
+body.theme-blue {
+    --primary-color: #0ea5e9;
+    --primary-dark: #0284c7;
+    --primary-light: #38bdf8;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --background: #0c4a6e;
+    --surface: #075985;
+    --surface-light: #0369a1;
+    --surface-hover: #0284c7;
+    --text-primary: #f0f9ff;
+    --text-secondary: #bae6fd;
+    --text-muted: #7dd3fc;
+    --border: #0369a1;
+    --border-light: #0284c7;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Purple Theme */
+body.theme-purple {
+    --primary-color: #a855f7;
+    --primary-dark: #9333ea;
+    --primary-light: #c084fc;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --background: #3b0764;
+    --surface: #581c87;
+    --surface-light: #6b21a8;
+    --surface-hover: #7e22ce;
+    --text-primary: #faf5ff;
+    --text-secondary: #e9d5ff;
+    --text-muted: #d8b4fe;
+    --border: #6b21a8;
+    --border-light: #7e22ce;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    --gradient-primary: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Green Theme */
+body.theme-green {
+    --primary-color: #22c55e;
+    --primary-dark: #16a34a;
+    --primary-light: #4ade80;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --background: #052e16;
+    --surface: #14532d;
+    --surface-light: #166534;
+    --surface-hover: #15803d;
+    --text-primary: #f0fdf4;
+    --text-secondary: #bbf7d0;
+    --text-muted: #86efac;
+    --border: #166534;
+    --border-light: #15803d;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    --gradient-primary: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Ocean Theme */
+body.theme-ocean {
+    --primary-color: #14b8a6;
+    --primary-dark: #0d9488;
+    --primary-light: #2dd4bf;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --background: #042f2e;
+    --surface: #134e4a;
+    --surface-light: #115e59;
+    --surface-hover: #0f766e;
+    --text-primary: #f0fdfa;
+    --text-secondary: #99f6e4;
+    --text-muted: #5eead4;
+    --border: #115e59;
+    --border-light: #0f766e;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
 * {
     margin: 0;
     padding: 0;
@@ -30,7 +154,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    background: linear-gradient(135deg, var(--background) 0%, var(--surface) 50%, var(--background) 100%);
     background-size: 200% 200%;
     animation: gradientShift 15s ease infinite;
     color: var(--text-primary);
@@ -39,6 +163,7 @@ body {
     line-height: 1.6;
     position: relative;
     overflow-x: hidden;
+    transition: background 0.5s ease, color 0.5s ease;
 }
 
 @keyframes gradientShift {
@@ -60,7 +185,126 @@ body::before {
         radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
+    transition: opacity 0.5s ease;
 }
+
+/* ============================================
+   THEME SWITCHER
+   ============================================ */
+
+.theme-switcher {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-switcher-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-selector {
+    position: relative;
+}
+
+.theme-button {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.theme-button:hover {
+    background: var(--surface-light);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--shadow-lg);
+}
+
+.theme-button i {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.theme-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 0.5rem;
+    min-width: 200px;
+    box-shadow: 0 10px 30px var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.theme-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.theme-option:hover {
+    background: var(--surface-light);
+    transform: translateX(4px);
+}
+
+.theme-option.active {
+    background: var(--surface-light);
+    border-left: 3px solid var(--primary-color);
+}
+
+.theme-option i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.theme-option .theme-icon-dark { color: #6366f1; }
+.theme-option .theme-icon-light { color: #fbbf24; }
+.theme-option .theme-icon-blue { color: #0ea5e9; }
+.theme-option .theme-icon-purple { color: #a855f7; }
+.theme-option .theme-icon-green { color: #22c55e; }
+.theme-option .theme-icon-ocean { color: #14b8a6; }
+
+/* ============================================
+   CONTAINER & LAYOUT
+   ============================================ */
 
 .container {
     max-width: 1400px;
@@ -88,7 +332,10 @@ body::before {
     }
 }
 
-/* Payment Form */
+/* ============================================
+   PAYMENT FORM
+   ============================================ */
+
 .payment-form {
     background: var(--surface);
     border-radius: 32px;
@@ -99,7 +346,7 @@ body::before {
     width: 100%;
     position: relative;
     backdrop-filter: blur(10px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease, border-color 0.5s ease;
 }
 
 .payment-form:hover {
@@ -125,6 +372,7 @@ body::before {
     color: white;
     box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
     animation: pulse 2s ease-in-out infinite;
+    transition: background 0.5s ease;
 }
 
 @keyframes pulse {
@@ -141,15 +389,20 @@ body::before {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     letter-spacing: -0.5px;
+    transition: background 0.5s ease;
 }
 
 .form-header p {
     color: var(--text-muted);
     font-size: 1rem;
     font-weight: 400;
+    transition: color 0.5s ease;
 }
 
-/* Form Sections */
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
+
 .form-section {
     margin-bottom: 2rem;
     animation: slideUp 0.6s ease-out;
@@ -176,12 +429,14 @@ body::before {
 .section-header i {
     color: var(--primary-color);
     font-size: 1.25rem;
+    transition: color 0.5s ease;
 }
 
 .section-header h3 {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-primary);
+    transition: color 0.5s ease;
 }
 
 .form-group {
@@ -202,11 +457,13 @@ body::before {
     color: var(--text-secondary);
     font-size: 0.95rem;
     font-weight: 500;
+    transition: color 0.5s ease;
 }
 
 .form-group label i {
     color: var(--primary-light);
     font-size: 0.9rem;
+    transition: color 0.5s ease;
 }
 
 .input-wrapper {
@@ -222,7 +479,7 @@ body::before {
     color: var(--text-primary);
     font-size: 1rem;
     font-family: inherit;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, background 0.5s ease, border-color 0.5s ease, color 0.5s ease;
     outline: none;
 }
 
@@ -266,7 +523,10 @@ body::before {
 .card-brands .fa-cc-mastercard.active { color: #eb001b; }
 .card-brands .fa-cc-amex.active { color: #006fcf; }
 
-/* Error Message */
+/* ============================================
+   ERROR MESSAGE
+   ============================================ */
+
 .error-message {
     display: none;
     background: rgba(239, 68, 68, 0.1);
@@ -277,6 +537,7 @@ body::before {
     color: var(--error-color);
     font-size: 0.9rem;
     animation: shake 0.5s ease;
+    transition: background 0.5s ease, border-color 0.5s ease, color 0.5s ease;
 }
 
 .error-message i {
@@ -289,7 +550,10 @@ body::before {
     75% { transform: translateX(10px); }
 }
 
-/* Submit Button */
+/* ============================================
+   SUBMIT BUTTON
+   ============================================ */
+
 .submit-button {
     width: 100%;
     padding: 1.25rem 2rem;
@@ -388,14 +652,19 @@ body::before {
     gap: 0.75rem;
     color: var(--text-muted);
     font-size: 0.9rem;
+    transition: color 0.5s ease;
 }
 
 .security-info i {
     color: var(--success-color);
     font-size: 1.1rem;
+    transition: color 0.5s ease;
 }
 
-/* Credits */
+/* ============================================
+   CREDITS
+   ============================================ */
+
 .credits {
     text-align: center;
     margin-top: 3rem;
@@ -409,9 +678,13 @@ body::before {
     font-size: 0.9rem;
     opacity: 0.7;
     font-weight: 400;
+    transition: color 0.5s ease;
 }
 
-/* Modal */
+/* ============================================
+   MODAL
+   ============================================ */
+
 .modal {
     display: none;
     position: fixed;
@@ -443,6 +716,7 @@ body::before {
     box-shadow: 0 25px 80px var(--shadow-lg);
     animation: modalSlideUp 0.4s ease;
     position: relative;
+    transition: background 0.5s ease, border-color 0.5s ease;
 }
 
 @keyframes modalSlideUp {
@@ -469,6 +743,7 @@ body::before {
     color: white;
     animation: scaleIn 0.5s ease 0.2s both;
     box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+    transition: background 0.5s ease;
 }
 
 @keyframes scaleIn {
@@ -487,6 +762,7 @@ body::before {
     font-weight: 700;
     margin-bottom: 1rem;
     color: var(--text-primary);
+    transition: color 0.5s ease;
 }
 
 .modal-content > p {
@@ -494,9 +770,13 @@ body::before {
     margin-bottom: 2rem;
     font-size: 1.05rem;
     line-height: 1.6;
+    transition: color 0.5s ease;
 }
 
-/* Warning Box */
+/* ============================================
+   WARNING BOX
+   ============================================ */
+
 .warning-box {
     background: rgba(239, 68, 68, 0.1);
     border: 2px solid var(--error-color);
@@ -505,6 +785,7 @@ body::before {
     margin: 1.5rem 0 2rem;
     text-align: left;
     animation: slideIn 0.5s ease 0.3s both;
+    transition: background 0.5s ease, border-color 0.5s ease;
 }
 
 @keyframes slideIn {
@@ -528,10 +809,12 @@ body::before {
 .warning-icon i {
     color: var(--error-color);
     font-size: 1.5rem;
+    transition: color 0.5s ease;
 }
 
 .warning-content {
     color: var(--text-primary);
+    transition: color 0.5s ease;
 }
 
 .warning-content strong {
@@ -539,6 +822,7 @@ body::before {
     display: block;
     margin-bottom: 0.5rem;
     font-size: 1rem;
+    transition: color 0.5s ease;
 }
 
 .warning-content p {
@@ -546,6 +830,7 @@ body::before {
     font-size: 0.9rem;
     line-height: 1.6;
     margin: 0;
+    transition: color 0.5s ease;
 }
 
 .modal-button {
@@ -573,10 +858,22 @@ body::before {
     transform: translateY(0);
 }
 
-/* Responsive Design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
 @media (max-width: 640px) {
     body {
         padding: 1rem;
+    }
+    
+    .theme-switcher {
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    .theme-switcher-label {
+        display: none;
     }
     
     .payment-form {
@@ -610,17 +907,10 @@ body::before {
     }
 }
 
-/* Loading states */
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-    100% {
-        background-position: 1000px 0;
-    }
-}
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

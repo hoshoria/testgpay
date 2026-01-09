@@ -1,6 +1,160 @@
-// Payment Platform JavaScript - Enhanced Version
+// Payment Platform JavaScript - Enhanced Version with Multi-Theme Support
 
-// Format credit card number with real-time validation
+// ============================================
+// THEME SWITCHING SYSTEM
+// ============================================
+
+// Theme configuration
+const themes = {
+    dark: { name: 'Dark', icon: 'fa-moon' },
+    light: { name: 'Light', icon: 'fa-sun' },
+    blue: { name: 'Blue', icon: 'fa-water' },
+    purple: { name: 'Purple', icon: 'fa-gem' },
+    green: { name: 'Green', icon: 'fa-leaf' },
+    ocean: { name: 'Ocean', icon: 'fa-fish' }
+};
+
+// Load saved theme or default to dark
+function loadTheme() {
+    const savedTheme = localStorage.getItem('gpay-theme') || 'dark';
+    applyTheme(savedTheme);
+}
+
+// Apply theme to body
+function applyTheme(themeName) {
+    // Remove all theme classes
+    Object.keys(themes).forEach(theme => {
+        document.body.classList.remove(`theme-${theme}`);
+    });
+    
+    // Add new theme class (dark is default, no class needed)
+    if (themeName !== 'dark') {
+        document.body.classList.add(`theme-${themeName}`);
+    }
+    
+    // Update UI
+    updateThemeUI(themeName);
+    
+    // Save to localStorage
+    localStorage.setItem('gpay-theme', themeName);
+}
+
+// Update theme switcher UI
+function updateThemeUI(themeName) {
+    const themeButton = document.getElementById('theme-button');
+    const currentThemeName = document.getElementById('current-theme-name');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    
+    if (!themeButton || !currentThemeName) return;
+    
+    // Update button text and icon
+    const theme = themes[themeName];
+    currentThemeName.textContent = theme.name;
+    
+    // Update button icon
+    const buttonIcon = themeButton.querySelector('i:first-child');
+    if (buttonIcon) {
+        buttonIcon.className = `fas ${theme.icon}`;
+    }
+    
+    // Update active state in dropdown
+    themeOptions.forEach(option => {
+        if (option.dataset.theme === themeName) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
+}
+
+// Toggle theme dropdown
+function toggleThemeDropdown() {
+    const dropdown = document.getElementById('theme-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
+}
+
+// Close dropdown when clicking outside
+function closeThemeDropdown(event) {
+    const dropdown = document.getElementById('theme-dropdown');
+    const themeSelector = document.querySelector('.theme-selector');
+    
+    if (dropdown && themeSelector && !themeSelector.contains(event.target)) {
+        dropdown.classList.remove('active');
+    }
+}
+
+// Initialize theme system
+function initThemeSystem() {
+    // Load saved theme
+    loadTheme();
+    
+    // Theme button click handler
+    const themeButton = document.getElementById('theme-button');
+    if (themeButton) {
+        themeButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleThemeDropdown();
+        });
+        
+        // Keyboard accessibility
+        themeButton.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleThemeDropdown();
+            }
+        });
+    }
+    
+    // Theme option click handlers
+    const themeOptions = document.querySelectorAll('.theme-option');
+    themeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const themeName = option.dataset.theme;
+            applyTheme(themeName);
+            toggleThemeDropdown();
+        });
+        
+        // Keyboard accessibility for options
+        option.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const themeName = option.dataset.theme;
+                applyTheme(themeName);
+                toggleThemeDropdown();
+            }
+        });
+        
+        // Make options focusable
+        option.setAttribute('tabindex', '0');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', closeThemeDropdown);
+    
+    // Close dropdown on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const dropdown = document.getElementById('theme-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
+            }
+        }
+    });
+}
+
+// Initialize theme system when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeSystem);
+} else {
+    initThemeSystem();
+}
+
+// ============================================
+// PAYMENT FORM LOGIC
+// ============================================
+
 const cardNumberInput = document.getElementById('card-number');
 cardNumberInput.addEventListener('input', function (e) {
     let value = e.target.value.replace(/\s/g, '');
