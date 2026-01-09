@@ -540,17 +540,49 @@ function initGooglePayButton() {
                 <path d="M6.988 2.921c.992 0 1.88.34 2.58 1.008v.001l1.92-1.918C10.324.928 8.804.262 6.989.262a6.728 6.728 0 0 0-6.01 3.702l2.234 1.731c.532-1.592 2.022-2.774 3.776-2.774z" fill="#EA4335"/>
             </g>
         </svg>
-        <span class="gpay-text">Pagar</span>
+        <span class="gpay-text">Pagar con Google Pay</span>
     `;
 
     customButton.addEventListener('click', function () {
-        const iframe = document.getElementById('yonawest-checkout');
-        if (iframe) {
-            showIframeForPayment(iframe);
-        }
+        openYonawestCheckout();
     });
 
     container.appendChild(customButton);
+}
+
+function openYonawestCheckout() {
+    const checkoutUrl = 'https://www.yonawest.com/checkouts/cn/hWN7GgwYgcoK1fFcg3pgn5EO/es-us?_r=AQABqzpiOcLMmcSIJ8rFhij6kKtyUcwFlejjY0FtazOt&auto_redirect=false&edge_redirect=true&skip_shop_pay=true';
+
+    // Open in popup window
+    const width = 600;
+    const height = 700;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+
+    const popup = window.open(
+        checkoutUrl,
+        'YonawestCheckout',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
+    );
+
+    if (popup) {
+        popup.focus();
+
+        // Monitor popup for completion
+        const checkPopup = setInterval(() => {
+            try {
+                if (popup.closed) {
+                    clearInterval(checkPopup);
+                    showPaymentSuccessModal();
+                }
+            } catch (e) {
+                // Continue checking
+            }
+        }, 500);
+    } else {
+        // Popup blocked, open in same tab
+        window.location.href = checkoutUrl;
+    }
 }
 
 function showIframeForPayment(iframe) {
