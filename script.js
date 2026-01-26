@@ -274,8 +274,7 @@ function triggerAutofillSave() {
         expiryInput.blur();
 
         setTimeout(() => {
-            showSuccessModal();
-            resetButton();
+            window.location.reload();
         }, 1500);
     } else {
         showError('Por favor, ingresa la información de la tarjeta.');
