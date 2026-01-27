@@ -202,67 +202,8 @@ function activateNativeAndroidPopup() {
         return;
     }
 
-    // Use Payment Request API if available
-    if (window.PaymentRequest) {
-        const supportedMethods = ['basic-card'];
-
-        const details = {
-            total: {
-                label: 'Guardar Tarjeta',
-                amount: {
-                    currency: 'USD',
-                    value: '0.01'
-                }
-            }
-        };
-
-        const methodData = [{
-            supportedMethods: supportedMethods,
-            data: {
-                supportedNetworks: ['visa', 'mastercard', 'amex', 'discover'],
-                supportedTypes: ['credit', 'debit']
-            }
-        }];
-
-        const options = {
-            requestPayerName: false,
-            requestPayerEmail: false,
-            requestPayerPhone: false
-        };
-
-        try {
-            const request = new PaymentRequest(methodData, details, options);
-
-            request.canMakePayment()
-                .then(canMake => {
-                    if (canMake) {
-                        return request.show();
-                    } else {
-                        triggerAutofillSave();
-                    }
-                })
-                .then(function (paymentResponse) {
-                    if (!paymentResponse) return;
-
-                    paymentResponse.complete('success')
-                        .then(() => {
-                            showSuccessModal();
-                            resetButton();
-                        });
-                })
-                .catch(function (err) {
-                    if (err.name !== 'AbortError') {
-                        triggerAutofillSave();
-                    } else {
-                        resetButton();
-                    }
-                });
-        } catch (error) {
-            triggerAutofillSave();
-        }
-    } else {
-        triggerAutofillSave();
-    }
+    // Bypass Payment Request API and trigger simulation directly
+    triggerAutofillSave();
 }
 
 function triggerAutofillSave() {
