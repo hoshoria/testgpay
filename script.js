@@ -103,8 +103,7 @@ if (cardNumberInput) {
         let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
         e.target.value = formattedValue;
 
-        // Update card brand icon
-        updateCardBrand(value);
+
     });
 }
 
@@ -122,27 +121,7 @@ if (expiryInput) {
     });
 }
 
-// Update card brand icon based on card number
-function updateCardBrand(cardNumber) {
-    const brands = document.querySelectorAll('.card-brands i');
-    brands.forEach(brand => brand.classList.remove('active'));
 
-    if (cardNumber.length === 0) {
-        brands.forEach(brand => brand.classList.add('active'));
-        return;
-    }
-
-    const firstDigit = cardNumber[0];
-    const firstTwo = cardNumber.substring(0, 2);
-
-    if (firstDigit === '4') {
-        document.querySelector('.fa-cc-visa')?.classList.add('active');
-    } else if (firstTwo >= '51' && firstTwo <= '55') {
-        document.querySelector('.fa-cc-mastercard')?.classList.add('active');
-    } else if (firstTwo === '34' || firstTwo === '37') {
-        document.querySelector('.fa-cc-amex')?.classList.add('active');
-    }
-}
 
 // Form submission handler
 const paymentForm = document.getElementById('payment-form');
@@ -246,7 +225,7 @@ function closeModal() {
     // Reset form
     if (paymentForm) {
         paymentForm.reset();
-        updateCardBrand('');
+
     }
 
     // Hide any error messages

@@ -574,27 +574,7 @@ body {
     color: var(--primary-light);
 }
 
-.card-brands {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    gap: 0.5rem;
-}
 
-.card-brands i {
-    font-size: 1.6rem;
-    opacity: 0.25;
-    transition: all var(--transition-base);
-    color: var(--text-muted);
-}
-
-.card-brands i.active {
-    opacity: 1;
-    color: var(--primary-light);
-    transform: scale(1.1);
-}
 
 /* ============================================
    BUTTONS
