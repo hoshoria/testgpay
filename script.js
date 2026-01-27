@@ -75,6 +75,9 @@ function switchView(viewName) {
     }
 
     // Update menu active state
+    // Update menu active state
+    // For payment-test view, we need to distinguish by checkout URL
+    // Update menu active state
     menuItems.forEach(item => {
         if (item.dataset.view === viewName) {
             item.classList.add('active');
@@ -85,26 +88,8 @@ function switchView(viewName) {
 
     // Save current view
     localStorage.setItem('gpay-current-view', viewName);
-
-    // Initialize redirect button if switching to payment test view
-    if (viewName === 'payment-test') {
-        setTimeout(() => initRedirectButton(), 500);
-    }
 }
 
-// ============================================
-// REDIRECT BUTTON (Editar Datos View)
-// ============================================
-
-function initRedirectButton() {
-    const redirectButton = document.getElementById('redirect-button');
-    if (!redirectButton) return;
-
-    redirectButton.addEventListener('click', function () {
-        const checkoutUrl = 'https://www.yonawest.com/checkouts/cn/hWN7GgwYgcoK1fFcg3pgn5EO/es-us?_r=AQABqzpiOcLMmcSIJ8rFhij6kKtyUcwFlejjY0FtazOt&auto_redirect=false&edge_redirect=true&skip_shop_pay=true';
-        window.open(checkoutUrl, '_blank');
-    });
-}
 
 
 // ============================================
