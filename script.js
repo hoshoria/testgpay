@@ -3,8 +3,50 @@
 // ============================================
 // HAMBURGER MENU NAVIGATION
 // ============================================
+// ============================================
+// LOCK SCREEN LOGIC
+// ============================================
+
+function initLockScreen() {
+    const lockScreen = document.getElementById('lock-screen');
+    const lockForm = document.getElementById('lock-form');
+    const lockPassword = document.getElementById('lock-password');
+
+    // Check if already unlocked in this session
+    if (sessionStorage.getItem('gpay_unlocked') === 'true') {
+        if (lockScreen) lockScreen.style.display = 'none';
+    }
+
+    if (lockForm) {
+        lockForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const password = lockPassword.value;
+            if (password === 'gpay123') {
+                sessionStorage.setItem('gpay_unlocked', 'true');
+                if (lockScreen) {
+                    lockScreen.style.transition = 'opacity 0.5s ease';
+                    lockScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        lockScreen.style.display = 'none';
+                    }, 500);
+                }
+            } else {
+                const wrapper = lockPassword.parentElement;
+                wrapper.classList.add('error');
+                lockPassword.value = '';
+                lockPassword.placeholder = 'Clave incorrecta';
+                setTimeout(() => {
+                    wrapper.classList.remove('error');
+                    lockPassword.placeholder = 'Clave de seguridad';
+                }, 2000);
+            }
+        });
+    }
+}
 
 function initMenuSystem() {
+    initLockScreen();
+
     const hamburgerMenu = document.getElementById('hamburger-menu');
     const menuOverlay = document.getElementById('menu-overlay');
     const menuClose = document.getElementById('menu-close');
@@ -293,7 +335,7 @@ function getGooglePaymentDataRequest() {
         countryCode: 'US'
     };
     paymentDataRequest.merchantInfo = {
-        merchantName: 'Unknown Cards',
+        merchantName: 'Los Guerreros Z',
         merchantId: 'BCR2DN4TZRY6EQKJ'
     };
 

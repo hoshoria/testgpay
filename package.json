@@ -11,10 +11,9 @@
     "google-pay",
     "cards"
   ],
-  "author": "Unknown Cards",
+  "author": "Los Guerreros Z",
   "license": "MIT",
   "engines": {
     "node": ">=14.x"
   }
 }
-

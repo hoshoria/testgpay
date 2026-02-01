@@ -65,5 +65,5 @@ vercel
 
 ## 👨‍💻 Créditos
 
-Creado para Unknown Cards
+Creado para Los Guerreros Z
 
