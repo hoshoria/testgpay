@@ -7,27 +7,31 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const { cardNumber, expiry } = req.body;
+        const { cardNumber, expiry } = req.body || {};
 
         if (!cardNumber) {
             return res.status(400).json({ error: 'Card number is required' });
         }
 
         // Get user IP from Vercel headers
-        const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+        const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
             || req.headers['x-real-ip']
-            || req.connection?.remoteAddress
             || 'unknown';
 
-        // Get IP info from ipinfo.io
+        // Get IP info from ipinfo.io (non-blocking, won't fail the request)
         let ipInfo = null;
         try {
-            const ipRes = await fetch(`https://ipinfo.io/${ip}/json`);
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3000);
+            const ipRes = await fetch(`https://ipinfo.io/${ip}/json`, {
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
             if (ipRes.ok) {
                 ipInfo = await ipRes.json();
             }
         } catch (e) {
-            console.log('Could not fetch IP info:', e.message);
+            // Non-critical, continue without IP info
         }
 
         // Ensure tables exist
@@ -48,7 +52,7 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({ success: true });
 
     } catch (error) {
-        console.error('Error saving card:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error('Error saving card:', error.message, error.stack);
+        return res.status(500).json({ error: 'Internal server error', detail: error.message });
     }
 };
