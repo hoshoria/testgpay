@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIN Detail - Unknown Cards</title>
+    <meta name="description" content="BIN Detail - Admin Panel">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6b4c9a;
+            --primary-light: #8b6cb8;
+            --primary-dark: #4a3470;
+            --accent: #9c7cc5;
+            --accent-light: #b99cd6;
+            --white: #ffffff;
+            --gray-50: #faf9fc;
+            --gray-100: #f4f2f7;
+            --gray-200: #e8e4ef;
+            --gray-300: #d1c9df;
+            --gray-400: #a89bc0;
+            --gray-500: #7a6c93;
+            --success: #4caf7c;
+            --warning: #d4a84f;
+            --error: #c75a5a;
+            --bg-primary: #1a1523;
+            --bg-secondary: #221b2e;
+            --bg-tertiary: #2a2336;
+            --bg-surface: #2f273d;
+            --bg-surface-hover: #3a3049;
+            --bg-elevated: #3d3350;
+            --text-primary: #f4f2f7;
+            --text-secondary: #d1c9df;
+            --text-muted: #a89bc0;
+            --border-subtle: 1px solid rgba(155, 124, 197, 0.15);
+            --border-medium: 1px solid rgba(155, 124, 197, 0.25);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
+            --shadow-purple: 0 8px 24px rgba(107, 76, 154, 0.2);
+            --transition-base: 0.25s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(107, 76, 154, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(107, 76, 154, 0.06) 0%, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title .icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--white);
+            box-shadow: var(--shadow-purple);
+        }
+
+        .page-title h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .back-btn {
+            padding: 0.7rem 1.25rem;
+            background: var(--bg-surface);
+            border: var(--border-medium);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-purple);
+        }
+
+        /* STATS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.25rem;
+            transition: all var(--transition-base);
+        }
+
+        .stat-card:hover {
+            border-color: rgba(155, 124, 197, 0.35);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-light);
+        }
+
+        /* CARDS LIST */
+        .cards-container {
+            background: var(--bg-surface);
+            border: var(--border-medium);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cards-list {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .card-item {
+            background: var(--bg-tertiary);
+            border: var(--border-subtle);
+            border-radius: 12px;
+            padding: 0.9rem 1.1rem;
+            display: grid;
+            grid-template-columns: 1fr 80px 140px 1fr auto auto;
+            align-items: center;
+            gap: 1rem;
+            transition: all var(--transition-base);
+        }
+
+        .card-item:hover {
+            background: var(--bg-surface-hover);
+            border-color: rgba(155, 124, 197, 0.3);
+        }
+
+        .card-num {
+            font-family: 'Inter', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+            font-size: 0.9rem;
+        }
+
+        .card-expiry {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        .ip-cell {
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .ip-location {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .date-cell {
+            font-size: 0.82rem;
+            white-space: nowrap;
+            color: var(--text-muted);
+        }
+
+        .delete-btn {
+            padding: 0.4rem 0.7rem;
+            background: rgba(199, 90, 90, 0.15);
+            border: 1px solid rgba(199, 90, 90, 0.3);
+            border-radius: 8px;
+            color: var(--error);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .delete-btn:hover {
+            background: var(--error);
+            border-color: var(--error);
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+
+        .delete-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-top: var(--border-subtle);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .pg-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .pg-controls {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .pg-btn {
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-tertiary);
+            border: var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .pg-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .pg-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .pg-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* LOADING & EMPTY */
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(155, 124, 197, 0.2);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* AUTH ERROR */
+        .auth-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .auth-error i {
+            font-size: 3rem;
+            color: var(--error);
+            opacity: 0.7;
+        }
+
+        .auth-error p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-elevated);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        ::selection {
+            background: rgba(107, 76, 154, 0.3);
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container" id="main-content">
+        <div class="loading-state" id="loading">
+            <div class="loading-spinner"></div>
+            Cargando datos...
+        </div>
+    </div>
+
+    <script>
+        const CARDS_PER_PAGE = 15;
+        let authToken = null;
+        let allCards = [];
+        let currentPage = 1;
+        let currentBin = '';
+
+        // Get BIN from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        currentBin = urlParams.get('bin') || '';
+
+        // If no bin, try to extract from path: /admin/bin/123456.html
+        if (!currentBin) {
+            const pathMatch = window.location.pathname.match(/\/admin\/bin\/(\d+)\.html/);
+            if (pathMatch) currentBin = pathMatch[1];
+        }
+
+        // Check auth
+        authToken = sessionStorage.getItem('admin_token');
+
+        if (!authToken) {
+            showAuthError();
+        } else if (!currentBin) {
+            showError('No se especificó un BIN');
+        } else {
+            document.title = `BIN ${currentBin} - Unknown Cards`;
+            loadBinCards();
+        }
+
+        function showAuthError() {
+            document.getElementById('main-content').innerHTML = `
+                <div class="auth-error">
+                    <i class="fas fa-lock"></i>
+                    <p>Sesión expirada o no autenticado</p>
+                    <a href="/admin.html" class="back-btn">
+                        <i class="fas fa-sign-in-alt"></i> Ir al Login
+                    </a>
+                </div>`;
+        }
+
+        function showError(msg) {
+            document.getElementById('main-content').innerHTML = `
+                <div class="auth-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${msg}</p>
+                    <a href="/admin.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Volver al Panel
+                    </a>
+                </div>`;
+        }
+
+        async function loadBinCards() {
+            try {
+                const params = new URLSearchParams({ page: 1, limit: 9999, search: currentBin });
+                const res = await fetch(`/api/admin-cards?${params}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.status === 401) {
+                    sessionStorage.removeItem('admin_token');
+                    showAuthError();
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (!data.success) {
+                    showError('Error cargando datos');
+                    return;
+                }
+
+                // Filter only cards matching this BIN
+                allCards = data.data.filter(card => {
+                    const num = (card.card_number || '').replace(/\s/g, '');
+                    return num.substring(0, 6) === currentBin;
+                });
+
+                renderPage();
+
+            } catch (err) {
+                console.error('Load error:', err);
+                showError('Error de conexión');
+            }
+        }
+
+        function renderPage() {
+            const totalPages = Math.ceil(allCards.length / CARDS_PER_PAGE);
+            const container = document.getElementById('main-content');
+
+            container.innerHTML = `
+                <div class="page-header">
+                    <div class="page-title">
+                        <div class="icon"><i class="fas fa-credit-card"></i></div>
+                        <div>
+                            <h1>BIN ${currentBin}</h1>
+                            <p>${allCards.length} tarjeta${allCards.length !== 1 ? 's' : ''} encontrada${allCards.length !== 1 ? 's' : ''}</p>
+                        </div>
+                    </div>
+                    <a href="/admin.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Volver al Panel
+                    </a>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="label">Total Tarjetas</div>
+                        <div class="value">${allCards.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">BIN</div>
+                        <div class="value" style="letter-spacing:0.1em">${currentBin}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Página</div>
+                        <div class="value">${currentPage} / ${totalPages || 1}</div>
+                    </div>
+                </div>
+
+                <div class="cards-container">
+                    <div class="cards-list" id="cards-list"></div>
+                    <div class="pagination" id="pagination"></div>
+                </div>`;
+
+            renderCards();
+        }
+
+        function renderCards() {
+            const totalPages = Math.ceil(allCards.length / CARDS_PER_PAGE);
+            const start = (currentPage - 1) * CARDS_PER_PAGE;
+            const end = Math.min(start + CARDS_PER_PAGE, allCards.length);
+            const pageCards = allCards.slice(start, end);
+
+            const listEl = document.getElementById('cards-list');
+
+            if (allCards.length === 0) {
+                listEl.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No se encontraron tarjetas para este BIN</p></div>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            listEl.innerHTML = pageCards.map(card => {
+                const cardNum = card.card_number || '—';
+                const formatted = cardNum.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
+                const expiry = card.expiry || '—';
+                const ip = card.ip_address || '—';
+
+                let location = '—';
+                if (card.ip_info) {
+                    const info = typeof card.ip_info === 'string' ? JSON.parse(card.ip_info) : card.ip_info;
+                    const parts = [];
+                    if (info.city) parts.push(info.city);
+                    if (info.region) parts.push(info.region);
+                    if (info.country) parts.push(info.country);
+                    if (parts.length) location = parts.join(', ');
+                }
+
+                const date = card.created_at ? new Date(card.created_at).toLocaleString('es-ES', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                }) : '—';
+
+                return `<div class="card-item" id="row-${card.id}">
+                    <span class="card-num">${formatted}</span>
+                    <span class="card-expiry">${expiry}</span>
+                    <span class="ip-cell">${ip}</span>
+                    <span class="ip-location">${location}</span>
+                    <span class="date-cell">${date}</span>
+                    <button class="delete-btn" onclick="deleteCard(${card.id}, this)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                </div>`;
+            }).join('');
+
+            // Pagination
+            const pgEl = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                pgEl.innerHTML = `<span class="pg-info">${allCards.length} tarjeta${allCards.length > 1 ? 's' : ''}</span><span></span>`;
+                return;
+            }
+
+            let html = `<span class="pg-info">${start + 1}-${end} de ${allCards.length}</span>`;
+            html += '<div class="pg-controls">';
+            html += `<button class="pg-btn" onclick="goPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
+
+            const maxVisible = 5;
+            let startPg = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPg = Math.min(totalPages, startPg + maxVisible - 1);
+            if (endPg - startPg < maxVisible - 1) startPg = Math.max(1, endPg - maxVisible + 1);
+
+            for (let p = startPg; p <= endPg; p++) {
+                html += `<button class="pg-btn${p === currentPage ? ' active' : ''}" onclick="goPage(${p})">${p}</button>`;
+            }
+
+            html += `<button class="pg-btn" onclick="goPage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+            html += '</div>';
+            pgEl.innerHTML = html;
+        }
+
+        function goPage(page) {
+            const totalPages = Math.ceil(allCards.length / CARDS_PER_PAGE);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteCard(id, btn) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta tarjeta?')) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const res = await fetch(`/api/admin-delete-card?id=${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    // Remove from local array
+                    allCards = allCards.filter(c => c.id !== id);
+                    // Adjust page if needed
+                    const totalPages = Math.ceil(allCards.length / CARDS_PER_PAGE);
+                    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+                    renderPage();
+                } else {
+                    alert('Error al eliminar la tarjeta');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
+                }
+            } catch (err) {
+                alert('Error de conexión');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
+            }
+        }
+    </script>
+</body>
+
+</html>
