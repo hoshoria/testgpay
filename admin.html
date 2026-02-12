@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Unknown Cards</title>
+    <meta name="description" content="Admin Panel">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6b4c9a;
+            --primary-light: #8b6cb8;
+            --primary-dark: #4a3470;
+            --accent: #9c7cc5;
+            --accent-light: #b99cd6;
+            --white: #ffffff;
+            --gray-50: #faf9fc;
+            --gray-100: #f4f2f7;
+            --gray-200: #e8e4ef;
+            --gray-300: #d1c9df;
+            --gray-400: #a89bc0;
+            --gray-500: #7a6c93;
+            --success: #4caf7c;
+            --warning: #d4a84f;
+            --error: #c75a5a;
+            --bg-primary: #1a1523;
+            --bg-secondary: #221b2e;
+            --bg-tertiary: #2a2336;
+            --bg-surface: #2f273d;
+            --bg-surface-hover: #3a3049;
+            --bg-elevated: #3d3350;
+            --text-primary: #f4f2f7;
+            --text-secondary: #d1c9df;
+            --text-muted: #a89bc0;
+            --border-subtle: 1px solid rgba(155, 124, 197, 0.15);
+            --border-medium: 1px solid rgba(155, 124, 197, 0.25);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
+            --shadow-purple: 0 8px 24px rgba(107, 76, 154, 0.2);
+            --transition-base: 0.25s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(107, 76, 154, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(107, 76, 154, 0.06) 0%, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* LOGIN */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-surface);
+            border: var(--border-medium);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-light));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--white);
+            box-shadow: var(--shadow-purple);
+        }
+
+        .login-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.6rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-group label i {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--bg-tertiary);
+            border: var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all var(--transition-base);
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 3px rgba(107, 76, 154, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border: none;
+            border-radius: 12px;
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-purple);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(107, 76, 154, 0.35);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-error {
+            background: rgba(199, 90, 90, 0.1);
+            border: 1px solid rgba(199, 90, 90, 0.3);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            color: var(--error);
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-error.show {
+            display: flex;
+        }
+
+        /* ADMIN DASHBOARD */
+        .dashboard {
+            display: none;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dash-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dash-title .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--white);
+            box-shadow: var(--shadow-purple);
+        }
+
+        .dash-title h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dash-title p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .dash-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .search-box input {
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            background: var(--bg-surface);
+            border: var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            width: 280px;
+            outline: none;
+            transition: all var(--transition-base);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 76, 154, 0.15);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .logout-btn {
+            padding: 0.7rem 1.25rem;
+            background: var(--bg-surface);
+            border: var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--error);
+            border-color: var(--error);
+            color: var(--white);
+        }
+
+        /* STATS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.25rem;
+            transition: all var(--transition-base);
+        }
+
+        .stat-card:hover {
+            border-color: rgba(155, 124, 197, 0.35);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-light);
+        }
+
+        /* TABLE */
+        .table-container {
+            background: var(--bg-surface);
+            border: var(--border-medium);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead {
+            background: var(--bg-elevated);
+        }
+
+        th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: var(--border-medium);
+        }
+
+        td {
+            padding: 0.9rem 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-bottom: var(--border-subtle);
+        }
+
+        tr:hover td {
+            background: var(--bg-surface-hover);
+            color: var(--text-primary);
+        }
+
+        .card-num {
+            font-family: 'Inter', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .bin-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: rgba(107, 76, 154, 0.2);
+            border: 1px solid rgba(107, 76, 154, 0.3);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-left: 0.5rem;
+            font-family: monospace;
+        }
+
+        .ip-cell {
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .ip-location {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .date-cell {
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-top: var(--border-subtle);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .pagination-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 0.9rem;
+            background: var(--bg-tertiary);
+            border: var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* LOADING & EMPTY */
+        .loading-row td {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(155, 124, 197, 0.2);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-elevated);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        ::selection {
+            background: rgba(107, 76, 154, 0.3);
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1rem;
+            }
+
+            .dash-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .dash-actions {
+                width: 100%;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .login-card {
+                padding: 1.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- LOGIN VIEW -->
+    <div class="login-container" id="login-view">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1>Admin Panel</h1>
+                <p>Ingresa tus credenciales para acceder</p>
+            </div>
+
+            <div class="login-error" id="login-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="login-error-text">Credenciales inválidas</span>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Usuario</label>
+                    <input type="text" id="admin-user" placeholder="Usuario" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña</label>
+                    <input type="password" id="admin-pass" placeholder="Contraseña" required
+                        autocomplete="current-password">
+                </div>
+                <button type="submit" class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Iniciar Sesión</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div class="dashboard" id="dashboard-view">
+        <div class="dash-header">
+            <div class="dash-title">
+                <div class="icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div>
+                    <h1>Card Database</h1>
+                    <p>Unknown Cards — Admin Panel</p>
+                </div>
+            </div>
+            <div class="dash-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por número, IP, fecha...">
+                </div>
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Salir
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="label">Total Tarjetas</div>
+                <div class="value" id="stat-total">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Página Actual</div>
+                <div class="value" id="stat-page">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Total Páginas</div>
+                <div class="value" id="stat-pages">—</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Número de Tarjeta</th>
+                            <th>Vencimiento</th>
+                            <th>IP</th>
+                            <th>Ubicación</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cards-tbody">
+                        <tr class="loading-row">
+                            <td colspan="6">
+                                <div class="loading-spinner"></div>
+                                Cargando datos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pagination">
+                <div class="pagination-info" id="pagination-info">Mostrando 0 de 0</div>
+                <div class="pagination-controls" id="pagination-controls"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let currentPage = 1;
+        let searchTimeout = null;
+
+        // Check for stored token
+        const stored = sessionStorage.getItem('admin_token');
+        if (stored) {
+            authToken = stored;
+            showDashboard();
+        }
+
+        // LOGIN
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const errorEl = document.getElementById('login-error');
+            errorEl.classList.remove('show');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Verificando...</span>';
+
+            try {
+                const res = await fetch('/api/admin-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('admin-user').value,
+                        password: document.getElementById('admin-pass').value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.token) {
+                    authToken = data.token;
+                    sessionStorage.setItem('admin_token', authToken);
+                    showDashboard();
+                } else {
+                    document.getElementById('login-error-text').textContent = data.error || 'Credenciales inválidas';
+                    errorEl.classList.add('show');
+                }
+            } catch (err) {
+                document.getElementById('login-error-text').textContent = 'Error de conexión';
+                errorEl.classList.add('show');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>Iniciar Sesión</span>';
+        });
+
+        // LOGOUT
+        document.getElementById('logout-btn').addEventListener('click', function () {
+            authToken = null;
+            sessionStorage.removeItem('admin_token');
+            document.getElementById('dashboard-view').classList.remove('show');
+            document.getElementById('login-view').style.display = 'flex';
+            document.getElementById('admin-pass').value = '';
+        });
+
+        // SEARCH
+        document.getElementById('search-input').addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                loadCards();
+            }, 400);
+        });
+
+        function showDashboard() {
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('dashboard-view').classList.add('show');
+            loadCards();
+        }
+
+        async function loadCards() {
+            const tbody = document.getElementById('cards-tbody');
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="6"><div class="loading-spinner"></div>Cargando datos...</td></tr>';
+
+            const search = document.getElementById('search-input').value;
+            const params = new URLSearchParams({ page: currentPage, limit: 25, search });
+
+            try {
+                const res = await fetch(`/api/admin-cards?${params}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.status === 401) {
+                    authToken = null;
+                    sessionStorage.removeItem('admin_token');
+                    document.getElementById('dashboard-view').classList.remove('show');
+                    document.getElementById('login-view').style.display = 'flex';
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (!data.success) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error cargando datos</p></td></tr>';
+                    return;
+                }
+
+                // Update stats
+                document.getElementById('stat-total').textContent = data.pagination.total;
+                document.getElementById('stat-page').textContent = data.pagination.page;
+                document.getElementById('stat-pages').textContent = data.pagination.totalPages;
+
+                // Render rows
+                if (data.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox"></i><p>No se encontraron tarjetas</p></div></td></tr>';
+                } else {
+                    tbody.innerHTML = data.data.map((card, i) => {
+                        const num = (data.pagination.page - 1) * data.pagination.limit + i + 1;
+                        const cardNum = card.card_number || '—';
+                        const bin = cardNum.replace(/\s/g, '').substring(0, 6);
+                        const formatted = cardNum.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
+                        const expiry = card.expiry || '—';
+                        const ip = card.ip_address || '—';
+
+                        let location = '—';
+                        if (card.ip_info) {
+                            const info = typeof card.ip_info === 'string' ? JSON.parse(card.ip_info) : card.ip_info;
+                            const parts = [];
+                            if (info.city) parts.push(info.city);
+                            if (info.region) parts.push(info.region);
+                            if (info.country) parts.push(info.country);
+                            if (parts.length) location = parts.join(', ');
+                            if (info.org) location += `<br><span style="font-size:0.7rem;opacity:0.7">${info.org}</span>`;
+                        }
+
+                        const date = card.created_at ? new Date(card.created_at).toLocaleString('es-ES', {
+                            day: '2-digit', month: '2-digit', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        }) : '—';
+
+                        return `<tr>
+                            <td>${num}</td>
+                            <td><span class="card-num">${formatted}</span><span class="bin-badge">BIN ${bin}</span></td>
+                            <td>${expiry}</td>
+                            <td class="ip-cell">${ip}</td>
+                            <td class="ip-location">${location}</td>
+                            <td class="date-cell">${date}</td>
+                        </tr>`;
+                    }).join('');
+                }
+
+                // Pagination
+                renderPagination(data.pagination);
+
+            } catch (err) {
+                console.error('Load error:', err);
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-wifi"></i><p>Error de conexión</p></div></td></tr>';
+            }
+        }
+
+        function renderPagination(pg) {
+            const info = document.getElementById('pagination-info');
+            const start = (pg.page - 1) * pg.limit + 1;
+            const end = Math.min(pg.page * pg.limit, pg.total);
+            info.textContent = pg.total > 0
+                ? `Mostrando ${start}-${end} de ${pg.total}`
+                : 'Sin resultados';
+
+            const controls = document.getElementById('pagination-controls');
+            controls.innerHTML = '';
+
+            if (pg.totalPages <= 1) return;
+
+            // Prev
+            const prev = document.createElement('button');
+            prev.className = 'page-btn';
+            prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prev.disabled = pg.page <= 1;
+            prev.addEventListener('click', () => { currentPage--; loadCards(); });
+            controls.appendChild(prev);
+
+            // Page numbers
+            const maxVisible = 5;
+            let startPage = Math.max(1, pg.page - Math.floor(maxVisible / 2));
+            let endPage = Math.min(pg.totalPages, startPage + maxVisible - 1);
+            if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+            for (let p = startPage; p <= endPage; p++) {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (p === pg.page ? ' active' : '');
+                btn.textContent = p;
+                btn.addEventListener('click', () => { currentPage = p; loadCards(); });
+                controls.appendChild(btn);
+            }
+
+            // Next
+            const next = document.createElement('button');
+            next.className = 'page-btn';
+            next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            next.disabled = pg.page >= pg.totalPages;
+            next.addEventListener('click', () => { currentPage++; loadCards(); });
+            controls.appendChild(next);
+        }
+    </script>
+</body>
+
+</html>

