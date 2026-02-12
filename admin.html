@@ -16,25 +16,14 @@
         :root {
             --primary: #6b4c9a;
             --primary-light: #8b6cb8;
-            --primary-dark: #4a3470;
-            --accent: #9c7cc5;
             --accent-light: #b99cd6;
             --white: #ffffff;
-            --gray-50: #faf9fc;
-            --gray-100: #f4f2f7;
-            --gray-200: #e8e4ef;
-            --gray-300: #d1c9df;
-            --gray-400: #a89bc0;
-            --gray-500: #7a6c93;
-            --success: #4caf7c;
-            --warning: #d4a84f;
             --error: #c75a5a;
             --bg-primary: #1a1523;
             --bg-secondary: #221b2e;
             --bg-tertiary: #2a2336;
             --bg-surface: #2f273d;
             --bg-surface-hover: #3a3049;
-            --bg-elevated: #3d3350;
             --text-primary: #f4f2f7;
             --text-secondary: #d1c9df;
             --text-muted: #a89bc0;
@@ -44,7 +33,7 @@
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
             --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
             --shadow-purple: 0 8px 24px rgba(107, 76, 154, 0.2);
-            --transition-base: 0.25s ease;
+            --transition: 0.25s ease;
         }
 
         @keyframes fadeInUp {
@@ -72,11 +61,9 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
-            background-image:
-                radial-gradient(ellipse at 20% 0%, rgba(107, 76, 154, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 100%, rgba(107, 76, 154, 0.06) 0%, transparent 50%);
+            background-image: radial-gradient(ellipse at 20% 0%, rgba(107, 76, 154, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(107, 76, 154, 0.06) 0%, transparent 50%);
             color: var(--text-primary);
             min-height: 100vh;
             line-height: 1.6;
@@ -112,7 +99,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-light));
+            background: linear-gradient(90deg, var(--primary), var(--accent-light), var(--primary-light));
             border-radius: 20px 20px 0 0;
         }
 
@@ -162,7 +149,7 @@
         }
 
         .form-group label i {
-            color: var(--accent);
+            color: var(--accent-light);
             font-size: 0.9rem;
         }
 
@@ -175,7 +162,7 @@
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
-            transition: all var(--transition-base);
+            transition: all var(--transition);
             outline: none;
         }
 
@@ -192,7 +179,7 @@
 
         .login-btn {
             width: 100%;
-            padding: 1rem 2rem;
+            padding: 1rem;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             border: none;
             border-radius: 12px;
@@ -201,7 +188,7 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-base);
+            transition: all var(--transition);
             box-shadow: var(--shadow-purple);
             margin-top: 0.5rem;
             display: flex;
@@ -238,7 +225,7 @@
             display: flex;
         }
 
-        /* ADMIN DASHBOARD */
+        /* DASHBOARD */
         .dashboard {
             display: none;
             padding: 2rem;
@@ -320,7 +307,7 @@
             font-size: 0.9rem;
             width: 280px;
             outline: none;
-            transition: all var(--transition-base);
+            transition: all var(--transition);
         }
 
         .search-box input:focus {
@@ -342,7 +329,7 @@
             font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all var(--transition-base);
+            transition: all var(--transition);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -367,7 +354,7 @@
             border: var(--border-subtle);
             border-radius: 14px;
             padding: 1.25rem;
-            transition: all var(--transition-base);
+            transition: all var(--transition);
         }
 
         .stat-card:hover {
@@ -398,13 +385,19 @@
             gap: 1rem;
         }
 
+        .bin-group-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
         .bin-group {
             background: var(--bg-surface);
             border: var(--border-medium);
             border-radius: 16px;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
-            transition: all var(--transition-base);
+            transition: all var(--transition);
         }
 
         .bin-group:hover {
@@ -419,7 +412,7 @@
             padding: 1.1rem 1.5rem;
             cursor: pointer;
             user-select: none;
-            transition: background var(--transition-base);
+            transition: background var(--transition);
             gap: 1rem;
         }
 
@@ -458,7 +451,6 @@
             font-family: 'Poppins', sans-serif;
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -502,12 +494,6 @@
             transform: translateX(4px);
         }
 
-        .bin-group-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
         /* LOADING & EMPTY */
         .loading-state {
             text-align: center;
@@ -548,7 +534,7 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--bg-elevated);
+            background: rgba(155, 124, 197, 0.3);
             border-radius: 4px;
         }
 
@@ -561,7 +547,7 @@
             color: var(--text-primary);
         }
 
-        @media (max-width: 768px) {
+        @media (max-width:768px) {
             .dashboard {
                 padding: 1rem;
             }
@@ -575,48 +561,30 @@
                 width: 100%;
             }
 
-            .dash-actions {
-                width: 100%;
-            }
-
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
             .stats-row {
                 grid-template-columns: 1fr;
-            }
-
-            .login-card {
-                padding: 1.75rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- LOGIN VIEW -->
+    <!-- LOGIN -->
     <div class="login-container" id="login-view">
         <div class="login-card">
             <div class="login-header">
-                <div class="icon">
-                    <i class="fas fa-user-shield"></i>
-                </div>
+                <div class="icon"><i class="fas fa-shield-alt"></i></div>
                 <h1>Admin Panel</h1>
-                <p>Ingresa tus credenciales para acceder</p>
+                <p>Unknown Cards — Acceso Administrativo</p>
             </div>
-
             <div class="login-error" id="login-error">
                 <i class="fas fa-exclamation-circle"></i>
-                <span id="login-error-text">Credenciales inválidas</span>
+                <span id="login-error-text">Error</span>
             </div>
-
             <form id="login-form">
                 <div class="form-group">
                     <label><i class="fas fa-user"></i> Usuario</label>
-                    <input type="text" id="admin-user" placeholder="Usuario" required autocomplete="username">
+                    <input type="text" id="admin-user" placeholder="Nombre de usuario" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Contraseña</label>
@@ -624,20 +592,17 @@
                         autocomplete="current-password">
                 </div>
                 <button type="submit" class="login-btn" id="login-btn">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Iniciar Sesión</span>
+                    <i class="fas fa-sign-in-alt"></i> <span>Iniciar Sesión</span>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- DASHBOARD VIEW -->
+    <!-- DASHBOARD -->
     <div class="dashboard" id="dashboard-view">
         <div class="dash-header">
             <div class="dash-title">
-                <div class="icon">
-                    <i class="fas fa-database"></i>
-                </div>
+                <div class="icon"><i class="fas fa-database"></i></div>
                 <div>
                     <h1>Card Database</h1>
                     <p>Unknown Cards — Admin Panel</p>
@@ -648,10 +613,7 @@
                     <i class="fas fa-search"></i>
                     <input type="text" id="search-input" placeholder="Buscar por número, IP, fecha...">
                 </div>
-                <button class="logout-btn" id="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Salir
-                </button>
+                <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
             </div>
         </div>
 
@@ -668,8 +630,7 @@
 
         <div id="cards-container">
             <div class="loading-state">
-                <div class="loading-spinner"></div>
-                Cargando datos...
+                <div class="loading-spinner"></div>Cargando datos...
             </div>
         </div>
     </div>
@@ -678,14 +639,9 @@
         let authToken = null;
         let searchTimeout = null;
 
-        // Check for stored token
         const stored = sessionStorage.getItem('admin_token');
-        if (stored) {
-            authToken = stored;
-            showDashboard();
-        }
+        if (stored) { authToken = stored; showDashboard(); }
 
-        // LOGIN
         document.getElementById('login-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
@@ -693,7 +649,6 @@
             errorEl.classList.remove('show');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Verificando...</span>';
-
             try {
                 const res = await fetch('/api/admin-login', {
                     method: 'POST',
@@ -703,9 +658,7 @@
                         password: document.getElementById('admin-pass').value
                     })
                 });
-
                 const data = await res.json();
-
                 if (res.ok && data.token) {
                     authToken = data.token;
                     sessionStorage.setItem('admin_token', authToken);
@@ -718,12 +671,10 @@
                 document.getElementById('login-error-text').textContent = 'Error de conexión';
                 errorEl.classList.add('show');
             }
-
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>Iniciar Sesión</span>';
         });
 
-        // LOGOUT
         document.getElementById('logout-btn').addEventListener('click', function () {
             authToken = null;
             sessionStorage.removeItem('admin_token');
@@ -732,12 +683,9 @@
             document.getElementById('admin-pass').value = '';
         });
 
-        // SEARCH
         document.getElementById('search-input').addEventListener('input', function () {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                loadCards();
-            }, 400);
+            searchTimeout = setTimeout(() => loadCards(), 400);
         });
 
         function showDashboard() {
@@ -751,13 +699,10 @@
             container.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div>Cargando datos...</div>';
 
             const search = document.getElementById('search-input').value;
-            const params = new URLSearchParams({ page: 1, limit: 9999, search });
-
             try {
-                const res = await fetch(`/api/admin-cards?${params}`, {
-                    headers: { 'Authorization': `Bearer ${authToken}` }
+                const res = await fetch(`/api/admin-cards?page=1&limit=9999&search=${encodeURIComponent(search)}`, {
+                    headers: { 'Authorization': 'Bearer ' + authToken }
                 });
-
                 if (res.status === 401) {
                     authToken = null;
                     sessionStorage.removeItem('admin_token');
@@ -765,63 +710,55 @@
                     document.getElementById('login-view').style.display = 'flex';
                     return;
                 }
-
                 const data = await res.json();
-
                 if (!data.success) {
                     container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error cargando datos</p></div>';
                     return;
                 }
 
-                // Group cards by BIN (first 6 digits)
-                const binGroups = {};
+                // Group by BIN
+                const groups = {};
                 data.data.forEach(card => {
-                    const cardNum = card.card_number || '';
-                    const bin = cardNum.replace(/\s/g, '').substring(0, 6);
-                    if (!binGroups[bin]) binGroups[bin] = [];
-                    binGroups[bin].push(card);
+                    const bin = (card.card_number || '').replace(/\s/g, '').substring(0, 6);
+                    if (!groups[bin]) groups[bin] = [];
+                    groups[bin].push(card);
                 });
+                const bins = Object.keys(groups).sort();
 
-                const binKeys = Object.keys(binGroups).sort();
-
-                // Update stats
                 document.getElementById('stat-total').textContent = data.data.length;
-                document.getElementById('stat-bins').textContent = binKeys.length;
+                document.getElementById('stat-bins').textContent = bins.length;
 
-                // Render BIN groups as clickable links
-                if (data.data.length === 0) {
+                if (bins.length === 0) {
                     container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No se encontraron tarjetas</p></div>';
-                } else {
-                    container.innerHTML = '<div class="bin-groups-container">' + binKeys.map(bin => {
-                        const cards = binGroups[bin];
-                        const latestDate = cards.reduce((latest, c) => {
-                            const d = c.created_at ? new Date(c.created_at) : new Date(0);
-                            return d > latest ? d : latest;
-                        }, new Date(0));
-                        const latestStr = latestDate.toLocaleString('es-ES', {
-                            day: '2-digit', month: '2-digit', year: 'numeric',
-                            hour: '2-digit', minute: '2-digit'
-                        });
-
-                        return `<a href="/admin/bin/${bin}.html" class="bin-group-link">
-                            <div class="bin-group" data-bin="${bin}">
-                                <div class="bin-group-header">
-                                    <div class="bin-group-header-left">
-                                        <div class="bin-group-icon"><i class="fas fa-credit-card"></i></div>
-                                        <div class="bin-group-info">
-                                            <div class="bin-group-title">
-                                                <span class="bin-label">${bin}</span>
-                                                <span class="bin-group-badge"><i class="fas fa-layer-group"></i> ${cards.length} tarjeta${cards.length > 1 ? 's' : ''}</span>
-                                            </div>
-                                            <div class="bin-group-meta">Última: ${latestStr}</div>
-                                        </div>
-                                    </div>
-                                    <i class="fas fa-chevron-right bin-group-arrow"></i>
-                                </div>
-                            </div>
-                        </a>`;
-                    }).join('') + '</div>';
+                    return;
                 }
+
+                container.innerHTML = '<div class="bin-groups-container">' + bins.map(bin => {
+                    const cards = groups[bin];
+                    const latest = cards.reduce((l, c) => {
+                        const d = c.created_at ? new Date(c.created_at) : new Date(0);
+                        return d > l ? d : l;
+                    }, new Date(0));
+                    const dateStr = latest.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    return '<a href="/admin/bin/' + bin + '.html" class="bin-group-link">' +
+                        '<div class="bin-group">' +
+                        '<div class="bin-group-header">' +
+                        '<div class="bin-group-header-left">' +
+                        '<div class="bin-group-icon"><i class="fas fa-credit-card"></i></div>' +
+                        '<div class="bin-group-info">' +
+                        '<div class="bin-group-title">' +
+                        '<span class="bin-label">' + bin + '</span>' +
+                        '<span class="bin-group-badge"><i class="fas fa-layer-group"></i> ' + cards.length + ' tarjeta' + (cards.length > 1 ? 's' : '') + '</span>' +
+                        '</div>' +
+                        '<div class="bin-group-meta">Última: ' + dateStr + '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<i class="fas fa-chevron-right bin-group-arrow"></i>' +
+                        '</div>' +
+                        '</div>' +
+                        '</a>';
+                }).join('') + '</div>';
 
             } catch (err) {
                 console.error('Load error:', err);
