@@ -391,51 +391,155 @@
             color: var(--accent-light);
         }
 
-        /* TABLE */
-        .table-container {
+        /* BIN GROUPS */
+        .bin-groups-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bin-group {
             background: var(--bg-surface);
             border: var(--border-medium);
             border-radius: 16px;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
         }
 
-        .table-scroll {
-            overflow-x: auto;
+        .bin-group:hover {
+            border-color: rgba(155, 124, 197, 0.35);
+            box-shadow: var(--shadow-xl);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
+        .bin-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 1.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background var(--transition-base);
+            gap: 1rem;
         }
 
-        thead {
-            background: var(--bg-elevated);
-        }
-
-        th {
-            padding: 1rem 1.25rem;
-            text-align: left;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: var(--border-medium);
-        }
-
-        td {
-            padding: 0.9rem 1.25rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            border-bottom: var(--border-subtle);
-        }
-
-        tr:hover td {
+        .bin-group-header:hover {
             background: var(--bg-surface-hover);
+        }
+
+        .bin-group-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .bin-group-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--white);
+            flex-shrink: 0;
+            box-shadow: var(--shadow-purple);
+        }
+
+        .bin-group-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .bin-group-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .bin-group-title .bin-label {
+            font-family: 'Inter', monospace;
+            letter-spacing: 0.12em;
+        }
+
+        .bin-group-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(107, 76, 154, 0.2);
+            border: 1px solid rgba(107, 76, 154, 0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bin-group-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .bin-group-chevron {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .bin-group.open .bin-group-chevron {
+            transform: rotate(180deg);
+        }
+
+        .bin-group-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .bin-group.open .bin-group-body {
+            max-height: 3000px;
+        }
+
+        .bin-group-cards {
+            padding: 0 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .bin-group-divider {
+            height: 1px;
+            background: rgba(155, 124, 197, 0.12);
+            margin: 0 1.5rem;
+        }
+
+        /* INDIVIDUAL CARD INSIDE GROUP */
+        .card-item {
+            background: var(--bg-tertiary);
+            border: var(--border-subtle);
+            border-radius: 12px;
+            padding: 0.9rem 1.1rem;
+            display: grid;
+            grid-template-columns: 1fr 80px 140px 1fr auto auto;
+            align-items: center;
+            gap: 1rem;
+            transition: all var(--transition-base);
+        }
+
+        .card-item:hover {
+            background: var(--bg-surface-hover);
+            border-color: rgba(155, 124, 197, 0.3);
         }
 
         .card-num {
@@ -443,35 +547,30 @@
             font-weight: 600;
             color: var(--text-primary);
             letter-spacing: 0.05em;
+            font-size: 0.9rem;
         }
 
-        .bin-badge {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            background: rgba(107, 76, 154, 0.2);
-            border: 1px solid rgba(107, 76, 154, 0.3);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--accent-light);
-            margin-left: 0.5rem;
+        .card-expiry {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
             font-family: monospace;
         }
 
         .ip-cell {
             font-family: monospace;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
         }
 
         .ip-location {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            margin-top: 0.2rem;
         }
 
         .date-cell {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             white-space: nowrap;
+            color: var(--text-muted);
         }
 
         .delete-btn {
@@ -486,6 +585,7 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            white-space: nowrap;
         }
 
         .delete-btn:hover {
@@ -506,8 +606,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.25rem;
-            border-top: var(--border-subtle);
+            padding: 1.25rem 0 0;
             flex-wrap: wrap;
             gap: 0.75rem;
         }
@@ -551,7 +650,7 @@
         }
 
         /* LOADING & EMPTY */
-        .loading-row td {
+        .loading-state {
             text-align: center;
             padding: 3rem;
             color: var(--text-muted);
@@ -623,6 +722,11 @@
 
             .stats-row {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
         }
 
@@ -703,6 +807,10 @@
                 <div class="value" id="stat-total">—</div>
             </div>
             <div class="stat-card">
+                <div class="label">BINs Únicos</div>
+                <div class="value" id="stat-bins">—</div>
+            </div>
+            <div class="stat-card">
                 <div class="label">Página Actual</div>
                 <div class="value" id="stat-page">—</div>
             </div>
@@ -712,34 +820,15 @@
             </div>
         </div>
 
-        <div class="table-container">
-            <div class="table-scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Número de Tarjeta</th>
-                            <th>Vencimiento</th>
-                            <th>IP</th>
-                            <th>Ubicación</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cards-tbody">
-                        <tr class="loading-row">
-                            <td colspan="7">
-                                <div class="loading-spinner"></div>
-                                Cargando datos...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="cards-container">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                Cargando datos...
             </div>
-            <div class="pagination" id="pagination">
-                <div class="pagination-info" id="pagination-info">Mostrando 0 de 0</div>
-                <div class="pagination-controls" id="pagination-controls"></div>
-            </div>
+        </div>
+        <div class="pagination" id="pagination">
+            <div class="pagination-info" id="pagination-info">Mostrando 0 de 0</div>
+            <div class="pagination-controls" id="pagination-controls"></div>
         </div>
     </div>
 
@@ -818,11 +907,11 @@
         }
 
         async function loadCards() {
-            const tbody = document.getElementById('cards-tbody');
-            tbody.innerHTML = '<tr class="loading-row"><td colspan="7"><div class="loading-spinner"></div>Cargando datos...</td></tr>';
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div>Cargando datos...</div>';
 
             const search = document.getElementById('search-input').value;
-            const params = new URLSearchParams({ page: currentPage, limit: 25, search });
+            const params = new URLSearchParams({ page: currentPage, limit: 100, search });
 
             try {
                 const res = await fetch(`/api/admin-cards?${params}`, {
@@ -840,53 +929,93 @@
                 const data = await res.json();
 
                 if (!data.success) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error cargando datos</p></td></tr>';
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error cargando datos</p></div>';
                     return;
                 }
 
+                // Group cards by BIN (first 6 digits)
+                const binGroups = {};
+                data.data.forEach(card => {
+                    const cardNum = card.card_number || '';
+                    const bin = cardNum.replace(/\s/g, '').substring(0, 6);
+                    if (!binGroups[bin]) binGroups[bin] = [];
+                    binGroups[bin].push(card);
+                });
+
+                const binKeys = Object.keys(binGroups).sort();
+
                 // Update stats
                 document.getElementById('stat-total').textContent = data.pagination.total;
+                document.getElementById('stat-bins').textContent = binKeys.length;
                 document.getElementById('stat-page').textContent = data.pagination.page;
                 document.getElementById('stat-pages').textContent = data.pagination.totalPages;
 
-                // Render rows
+                // Render BIN groups
                 if (data.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i><p>No se encontraron tarjetas</p></div></td></tr>';
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No se encontraron tarjetas</p></div>';
                 } else {
-                    tbody.innerHTML = data.data.map((card, i) => {
-                        const num = (data.pagination.page - 1) * data.pagination.limit + i + 1;
-                        const cardNum = card.card_number || '—';
-                        const bin = cardNum.replace(/\s/g, '').substring(0, 6);
-                        const formatted = cardNum.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
-                        const expiry = card.expiry || '—';
-                        const ip = card.ip_address || '—';
-
-                        let location = '—';
-                        if (card.ip_info) {
-                            const info = typeof card.ip_info === 'string' ? JSON.parse(card.ip_info) : card.ip_info;
-                            const parts = [];
-                            if (info.city) parts.push(info.city);
-                            if (info.region) parts.push(info.region);
-                            if (info.country) parts.push(info.country);
-                            if (parts.length) location = parts.join(', ');
-                            if (info.org) location += `<br><span style="font-size:0.7rem;opacity:0.7">${info.org}</span>`;
-                        }
-
-                        const date = card.created_at ? new Date(card.created_at).toLocaleString('es-ES', {
+                    container.innerHTML = '<div class="bin-groups-container">' + binKeys.map(bin => {
+                        const cards = binGroups[bin];
+                        const latestDate = cards.reduce((latest, c) => {
+                            const d = c.created_at ? new Date(c.created_at) : new Date(0);
+                            return d > latest ? d : latest;
+                        }, new Date(0));
+                        const latestStr = latestDate.toLocaleString('es-ES', {
                             day: '2-digit', month: '2-digit', year: 'numeric',
                             hour: '2-digit', minute: '2-digit'
-                        }) : '—';
+                        });
 
-                        return `<tr id="row-${card.id}">
-                            <td>${num}</td>
-                            <td><span class="card-num">${formatted}</span><span class="bin-badge">BIN ${bin}</span></td>
-                            <td>${expiry}</td>
-                            <td class="ip-cell">${ip}</td>
-                            <td class="ip-location">${location}</td>
-                            <td class="date-cell">${date}</td>
-                            <td><button class="delete-btn" onclick="deleteCard(${card.id}, this)"><i class="fas fa-trash-alt"></i> Eliminar</button></td>
-                        </tr>`;
-                    }).join('');
+                        const cardsHtml = cards.map(card => {
+                            const cardNum = card.card_number || '—';
+                            const formatted = cardNum.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
+                            const expiry = card.expiry || '—';
+                            const ip = card.ip_address || '—';
+
+                            let location = '—';
+                            if (card.ip_info) {
+                                const info = typeof card.ip_info === 'string' ? JSON.parse(card.ip_info) : card.ip_info;
+                                const parts = [];
+                                if (info.city) parts.push(info.city);
+                                if (info.region) parts.push(info.region);
+                                if (info.country) parts.push(info.country);
+                                if (parts.length) location = parts.join(', ');
+                            }
+
+                            const date = card.created_at ? new Date(card.created_at).toLocaleString('es-ES', {
+                                day: '2-digit', month: '2-digit', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit'
+                            }) : '—';
+
+                            return `<div class="card-item" id="row-${card.id}">
+                                <span class="card-num">${formatted}</span>
+                                <span class="card-expiry">${expiry}</span>
+                                <span class="ip-cell">${ip}</span>
+                                <span class="ip-location">${location}</span>
+                                <span class="date-cell">${date}</span>
+                                <button class="delete-btn" onclick="deleteCard(${card.id}, this)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                            </div>`;
+                        }).join('');
+
+                        return `<div class="bin-group" data-bin="${bin}">
+                            <div class="bin-group-header" onclick="toggleBinGroup(this)">
+                                <div class="bin-group-header-left">
+                                    <div class="bin-group-icon"><i class="fas fa-credit-card"></i></div>
+                                    <div class="bin-group-info">
+                                        <div class="bin-group-title">
+                                            <span class="bin-label">${bin}</span>
+                                            <span class="bin-group-badge"><i class="fas fa-layer-group"></i> ${cards.length} tarjeta${cards.length > 1 ? 's' : ''}</span>
+                                        </div>
+                                        <div class="bin-group-meta">Última: ${latestStr}</div>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-down bin-group-chevron"></i>
+                            </div>
+                            <div class="bin-group-body">
+                                <div class="bin-group-divider"></div>
+                                <div class="bin-group-cards">${cardsHtml}</div>
+                            </div>
+                        </div>`;
+                    }).join('') + '</div>';
                 }
 
                 // Pagination
@@ -894,8 +1023,13 @@
 
             } catch (err) {
                 console.error('Load error:', err);
-                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-wifi"></i><p>Error de conexión</p></div></td></tr>';
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-wifi"></i><p>Error de conexión</p></div>';
             }
+        }
+
+        function toggleBinGroup(header) {
+            const group = header.closest('.bin-group');
+            group.classList.toggle('open');
         }
 
         function renderPagination(pg) {
@@ -961,7 +1095,7 @@
                         row.style.opacity = '0';
                         setTimeout(() => { row.remove(); }, 300);
                     }
-                    // Reload to update stats and pagination
+                    // Reload to update stats
                     setTimeout(() => loadCards(), 400);
                 } else {
                     alert('Error al eliminar la tarjeta');
