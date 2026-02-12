@@ -4,8 +4,11 @@ let pool;
 
 function getPool() {
     if (!pool) {
+        // Parse the DATABASE_URL but override SSL settings
+        const connectionString = process.env.DATABASE_URL;
+
         pool = new Pool({
-            connectionString: process.env.DATABASE_URL,
+            connectionString: connectionString.replace('?sslmode=require', ''),
             ssl: {
                 rejectUnauthorized: false
             },
