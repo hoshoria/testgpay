@@ -1,63 +1,75 @@
 /* ============================================
-   DESIGN TOKENS & VARIABLES
+   DESIGN TOKENS — HACKER CYBERPUNK EDITION
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* Elegant Purple Palette */
-    --primary: #6b4c9a;
-    --primary-light: #8b6cb8;
-    --primary-dark: #4a3470;
-    --primary-darker: #2d1f47;
-    --accent: #9c7cc5;
-    --accent-light: #b99cd6;
+    /* Core Purple Palette */
+    --primary: #7c3aed;
+    --primary-light: #a855f7;
+    --primary-dark: #5b21b6;
+    --primary-darker: #3b0764;
+    --accent: #c084fc;
+    --accent-light: #d8b4fe;
+
+    /* Neon Accents */
+    --neon-purple: #bf5af2;
+    --neon-cyan: #22d3ee;
+    --neon-green: #4ade80;
 
     /* Neutral Colors */
     --white: #ffffff;
-    --gray-50: #faf9fc;
-    --gray-100: #f4f2f7;
-    --gray-200: #e8e4ef;
-    --gray-300: #d1c9df;
-    --gray-400: #a89bc0;
-    --gray-500: #7a6c93;
-    --gray-600: #5c5071;
-    --gray-700: #423852;
-    --gray-800: #2a2336;
-    --gray-900: #1a1523;
+    --gray-50: #faf5ff;
+    --gray-100: #f3e8ff;
+    --gray-200: #e9d5ff;
+    --gray-300: #c4b5d4;
+    --gray-400: #a78baf;
+    --gray-500: #7c6a90;
+    --gray-600: #5e4f70;
+    --gray-700: #3f3254;
+    --gray-800: #261a38;
+    --gray-900: #110a1c;
 
     /* Semantic Colors */
-    --success: #4caf7c;
-    --warning: #d4a84f;
-    --error: #c75a5a;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --error: #f87171;
 
     /* Background Palette */
-    --bg-primary: #1a1523;
-    --bg-secondary: #221b2e;
-    --bg-tertiary: #2a2336;
-    --bg-surface: #2f273d;
-    --bg-surface-hover: #3a3049;
-    --bg-elevated: #3d3350;
+    --bg-primary: #0a0612;
+    --bg-secondary: #110a1c;
+    --bg-tertiary: #1a1028;
+    --bg-surface: rgba(26, 16, 40, 0.85);
+    --bg-surface-hover: rgba(36, 24, 56, 0.9);
+    --bg-elevated: rgba(44, 28, 68, 0.9);
 
     /* Text Colors */
-    --text-primary: #f4f2f7;
-    --text-secondary: #d1c9df;
-    --text-muted: #a89bc0;
-    --text-dark: #1a1523;
+    --text-primary: #f0e6ff;
+    --text-secondary: #c4b5d4;
+    --text-muted: #8b7a9e;
+    --text-dark: #110a1c;
 
     /* Border & Shadow */
-    --border-subtle: 1px solid rgba(155, 124, 197, 0.15);
-    --border-medium: 1px solid rgba(155, 124, 197, 0.25);
-    --border-accent: 1px solid rgba(155, 124, 197, 0.4);
+    --border-subtle: 1px solid rgba(124, 58, 237, 0.12);
+    --border-medium: 1px solid rgba(124, 58, 237, 0.25);
+    --border-accent: 1px solid rgba(168, 85, 247, 0.45);
+    --border-glow: 1px solid rgba(191, 90, 242, 0.4);
 
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.15);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
-    --shadow-purple: 0 8px 24px rgba(107, 76, 154, 0.2);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --shadow-purple: 0 0 30px rgba(124, 58, 237, 0.15);
+    --shadow-neon: 0 0 20px rgba(191, 90, 242, 0.2), 0 0 60px rgba(124, 58, 237, 0.1);
 
     /* Transitions */
     --transition-fast: 0.15s ease;
     --transition-base: 0.25s ease;
     --transition-slow: 0.4s ease;
+
+    /* Fonts */
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-display: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
 }
