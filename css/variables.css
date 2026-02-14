@@ -1,0 +1,63 @@
+/* ============================================
+   DESIGN TOKENS & VARIABLES
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Elegant Purple Palette */
+    --primary: #6b4c9a;
+    --primary-light: #8b6cb8;
+    --primary-dark: #4a3470;
+    --primary-darker: #2d1f47;
+    --accent: #9c7cc5;
+    --accent-light: #b99cd6;
+
+    /* Neutral Colors */
+    --white: #ffffff;
+    --gray-50: #faf9fc;
+    --gray-100: #f4f2f7;
+    --gray-200: #e8e4ef;
+    --gray-300: #d1c9df;
+    --gray-400: #a89bc0;
+    --gray-500: #7a6c93;
+    --gray-600: #5c5071;
+    --gray-700: #423852;
+    --gray-800: #2a2336;
+    --gray-900: #1a1523;
+
+    /* Semantic Colors */
+    --success: #4caf7c;
+    --warning: #d4a84f;
+    --error: #c75a5a;
+
+    /* Background Palette */
+    --bg-primary: #1a1523;
+    --bg-secondary: #221b2e;
+    --bg-tertiary: #2a2336;
+    --bg-surface: #2f273d;
+    --bg-surface-hover: #3a3049;
+    --bg-elevated: #3d3350;
+
+    /* Text Colors */
+    --text-primary: #f4f2f7;
+    --text-secondary: #d1c9df;
+    --text-muted: #a89bc0;
+    --text-dark: #1a1523;
+
+    /* Border & Shadow */
+    --border-subtle: 1px solid rgba(155, 124, 197, 0.15);
+    --border-medium: 1px solid rgba(155, 124, 197, 0.25);
+    --border-accent: 1px solid rgba(155, 124, 197, 0.4);
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
+    --shadow-purple: 0 8px 24px rgba(107, 76, 154, 0.2);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.25s ease;
+    --transition-slow: 0.4s ease;
+}

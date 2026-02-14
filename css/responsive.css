@@ -1,0 +1,60 @@
+/* ============================================
+   RESPONSIVE — TABLET (max-width: 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .payment-form {
+        padding: 1.75rem;
+        border-radius: 16px;
+    }
+
+    .menu-content {
+        width: 100%;
+    }
+
+    .form-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .hamburger-menu {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        top: 15px;
+        left: 15px;
+        width: 46px;
+        height: 46px;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
+
+/* ============================================
+   RESPONSIVE — MOBILE (max-width: 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+    .payment-form {
+        padding: 1.5rem;
+    }
+
+    .form-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .submit-button,
+    .redirect-button {
+        padding: 0.9rem 1.5rem;
+        font-size: 0.95rem;
+    }
+}

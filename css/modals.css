@@ -1,0 +1,176 @@
+/* ============================================
+   MODAL OVERLAY
+   ============================================ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 21, 35, 0.9);
+    backdrop-filter: blur(12px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-base);
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ============================================
+   MODAL CONTENT
+   ============================================ */
+
+.modal-content {
+    background: var(--bg-surface);
+    border: var(--border-medium);
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 460px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    transform: scale(0.95);
+    transition: transform var(--transition-base);
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+    animation: fadeInUp 0.4s ease;
+}
+
+.modal-content h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.modal-content p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* ============================================
+   MODAL BUTTON
+   ============================================ */
+
+.modal-button {
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none;
+    border-radius: 10px;
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-purple);
+}
+
+.modal-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(107, 76, 154, 0.35);
+}
+
+/* ============================================
+   SUCCESS ICON
+   ============================================ */
+
+.success-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--success), #6bc79a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--white);
+    box-shadow: 0 8px 24px rgba(76, 175, 124, 0.25);
+}
+
+/* ============================================
+   WARNING BOX
+   ============================================ */
+
+.warning-box {
+    background: rgba(212, 168, 79, 0.1);
+    border: 1px solid rgba(212, 168, 79, 0.25);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.warning-icon {
+    color: var(--warning);
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.warning-content strong {
+    color: var(--warning);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.warning-content p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ============================================
+   PAYMENT DETAILS
+   ============================================ */
+
+.payment-details {
+    background: var(--bg-tertiary);
+    border: var(--border-subtle);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    border-bottom: var(--border-subtle);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row span:first-child {
+    color: var(--text-muted);
+}
+
+.detail-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.detail-value.success {
+    color: var(--success);
+}

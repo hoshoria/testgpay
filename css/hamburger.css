@@ -1,0 +1,251 @@
+/* ============================================
+   HAMBURGER MENU BUTTON
+   ============================================ */
+
+.hamburger-menu {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    z-index: 10000;
+    background: var(--bg-surface);
+    border: var(--border-subtle);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 12px;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.hamburger-menu:hover {
+    background: var(--bg-surface-hover);
+    border-color: rgba(155, 124, 197, 0.35);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.hamburger-menu.active {
+    background: var(--bg-elevated);
+}
+
+.hamburger-menu .bar {
+    width: 24px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: all var(--transition-base);
+}
+
+.hamburger-menu.active .bar:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .bar:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ============================================
+   MENU OVERLAY & CONTENT
+   ============================================ */
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 21, 35, 0.92);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    will-change: opacity;
+    contain: layout style;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 380px;
+    height: 100%;
+    background: var(--bg-secondary);
+    border-right: var(--border-medium);
+    box-shadow: var(--shadow-xl);
+    padding: 2rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    will-change: transform;
+    contain: layout style;
+}
+
+.menu-overlay.active .menu-content {
+    transform: translateX(0);
+}
+
+/* ============================================
+   MENU HEADER
+   ============================================ */
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: var(--border-subtle);
+}
+
+.menu-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.menu-logo i {
+    font-size: 1.8rem;
+    color: var(--accent);
+}
+
+.menu-close {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-close:hover {
+    background: var(--bg-surface);
+    border-color: rgba(155, 124, 197, 0.3);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   MENU NAV ITEMS
+   ============================================ */
+
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-surface);
+    border: var(--border-subtle);
+    border-radius: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    background: var(--bg-surface-hover);
+    border-color: rgba(155, 124, 197, 0.35);
+    color: var(--text-primary);
+    transform: translateX(8px);
+}
+
+.menu-item.active {
+    border-left: 3px solid var(--primary);
+}
+
+.menu-item-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: var(--border-subtle);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    color: var(--accent);
+    transition: all var(--transition-base);
+}
+
+.menu-item:hover .menu-item-icon,
+.menu-item.active .menu-item-icon {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+.menu-item-content {
+    flex: 1;
+}
+
+.menu-item-content h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: inherit;
+}
+
+.menu-item-content p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.menu-item i.fa-chevron-right {
+    color: var(--text-muted);
+    transition: all var(--transition-base);
+    font-size: 0.9rem;
+}
+
+.menu-item:hover i.fa-chevron-right {
+    transform: translateX(4px);
+    color: var(--accent);
+}
+
+/* ============================================
+   MENU FOOTER
+   ============================================ */
+
+.menu-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: var(--border-subtle);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
