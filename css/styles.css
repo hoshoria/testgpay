@@ -152,6 +152,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg-primary);
@@ -164,8 +168,6 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    position: relative;
-    overflow-x: hidden;
 }
 
 /* ============================================
@@ -183,7 +185,7 @@ body {
     border: var(--border-subtle);
     border-radius: 12px;
     cursor: pointer;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -191,6 +193,8 @@ body {
     padding: 12px;
     transition: all var(--transition-base);
     box-shadow: var(--shadow-md);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .hamburger-menu:hover {
@@ -1003,10 +1007,15 @@ body {
     }
 
     .hamburger-menu {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
         top: 15px;
         left: 15px;
         width: 46px;
         height: 46px;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 }
 
