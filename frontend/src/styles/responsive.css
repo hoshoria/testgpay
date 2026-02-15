@@ -1,36 +1,256 @@
-@media (max-width: 768px) {
+/* ===== DESKTOP (large screens) ===== */
+@media (min-width: 1200px) {
     .container {
-        padding: 1rem;
+        max-width: 700px;
+        padding: 2.5rem 1.5rem;
+    }
+
+    .payment-form {
+        padding: 2.5rem;
     }
 
     .dashboard {
-        padding: 1rem;
+        padding: 2.5rem 3rem;
+    }
+
+    .page-container {
+        padding: 2.5rem 3rem;
+    }
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 1024px) {
+    .dashboard {
+        padding: 1.5rem;
+    }
+
+    .page-container {
+        padding: 1.5rem;
+    }
+
+    .search-box input {
+        width: 250px;
+    }
+
+    .card-item {
+        grid-template-columns: 1fr 80px 120px 1fr auto auto;
+        gap: 0.75rem;
+    }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    .container {
+        padding: 1rem 0.75rem;
+        padding-top: 4.5rem;
+    }
+
+    .payment-wrapper {
+        padding-top: 0;
+        min-height: auto;
+    }
+
+    .payment-form {
+        padding: 1.5rem 1.25rem;
+        border-radius: 12px;
+    }
+
+    .form-header h1 {
+        font-size: 1.1rem;
+    }
+
+    .header-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .submit-button {
+        padding: 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    /* Admin */
+    .dashboard {
+        padding: 1rem 0.75rem;
     }
 
     .dash-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .dash-title h1 {
+        font-size: 0.95rem;
+    }
+
+    .dash-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .search-box {
+        width: 100%;
     }
 
     .search-box input {
         width: 100%;
     }
 
-    .stats-row {
-        grid-template-columns: 1fr;
+    .logout-btn {
+        width: 100%;
+        justify-content: center;
     }
 
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .stat-card .value {
+        font-size: 1.3rem;
+    }
+
+    .bin-group-header {
+        padding: 0.85rem 1rem;
+    }
+
+    .bin-group-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+
+    .bin-group-title {
+        font-size: 0.92rem;
+    }
+
+    .bin-group-badge {
+        font-size: 0.62rem;
+    }
+
+    /* BIN Detail  */
     .page-container {
-        padding: 1rem;
+        padding: 1rem 0.75rem;
     }
 
     .page-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .back-btn {
+        align-self: flex-start;
     }
 
     .card-item {
         grid-template-columns: 1fr;
+        gap: 0.4rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .card-num {
+        font-size: 0.9rem;
+    }
+
+    .pagination {
+        flex-direction: column;
         gap: 0.5rem;
+        text-align: center;
+    }
+
+    /* Hamburger adjustments */
+    .hamburger-menu {
+        top: 1rem;
+        left: 1rem;
+        width: 44px;
+        height: 44px;
+    }
+
+    .menu-content {
+        width: 280px;
+        max-width: 80vw;
+    }
+
+    .menu-item {
+        padding: 0.85rem;
+    }
+
+    .menu-item-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+    }
+
+    .menu-item-content h3 {
+        font-size: 0.92rem;
+    }
+
+    .menu-item-content p {
+        font-size: 0.7rem;
+    }
+
+    /* Login */
+    .login-container {
+        padding: 1rem;
+    }
+
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .login-header h1 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 400px) {
+    .container {
+        padding: 0.75rem 0.5rem;
+        padding-top: 4rem;
+    }
+
+    .payment-form {
+        padding: 1.25rem 1rem;
+    }
+
+    .form-header h1 {
+        font-size: 1rem;
+        letter-spacing: 0.1em;
+    }
+
+    .form-header p {
+        font-size: 0.68rem;
+    }
+
+    .header-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .login-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .menu-content {
+        width: 260px;
+    }
+
+    .redirect-button {
+        padding: 0.85rem 1rem;
+        font-size: 0.9rem;
     }
 }

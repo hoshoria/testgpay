@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import LockScreen, { isUnlocked } from '../components/LockScreen';
 import HamburgerMenu, { type ViewName } from '../components/HamburgerMenu';
 import CardForm from '../components/CardForm';
 import PaymentTest from '../components/PaymentTest';
@@ -12,7 +11,6 @@ function getInitialView(): ViewName {
 }
 
 export default function HomePage() {
-    const [unlocked, setUnlocked] = useState(isUnlocked);
     const [menuOpen, setMenuOpen] = useState(false);
     const [activeView, setActiveView] = useState<ViewName>(getInitialView);
 
@@ -20,10 +18,6 @@ export default function HomePage() {
         setActiveView(view);
         localStorage.setItem(SAVED_VIEW_KEY, view);
     }, []);
-
-    if (!unlocked) {
-        return <LockScreen onUnlock={() => setUnlocked(true)} />;
-    }
 
     return (
         <>
