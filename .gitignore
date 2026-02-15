@@ -9,6 +9,10 @@ yarn-error.log*
 .env.local
 .env.production
 
+# Build output
+dist/
+frontend/dist/
+
 # Vercel
 .vercel
 

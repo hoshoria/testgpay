@@ -1,8 +1,17 @@
 {
   "version": 2,
-  "buildCommand": null,
-  "outputDirectory": ".",
-  "framework": null,
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -20,16 +29,6 @@
           "value": "1; mode=block"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/admin/bin/:bin.html",
-      "destination": "/admin/bin.html?bin=:bin"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
     }
   ]
 }

@@ -1,0 +1,41 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes neonPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(124, 58, 237, 0.2), 0 0 30px rgba(124, 58, 237, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 60px rgba(124, 58, 237, 0.15);
+    }
+}
+
+@keyframes borderGlow {
+
+    0%,
+    100% {
+        border-color: rgba(124, 58, 237, 0.25);
+    }
+
+    50% {
+        border-color: rgba(191, 90, 242, 0.5);
+    }
+}
