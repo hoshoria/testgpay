@@ -341,3 +341,235 @@
     opacity: 0.4;
     color: var(--accent);
 }
+
+/* Tabs */
+.dash-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dash-tab {
+    padding: 0.65rem 1.25rem;
+    background: rgba(124, 58, 237, 0.06);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dash-tab:hover {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: rgba(124, 58, 237, 0.25);
+    color: var(--text-primary);
+}
+
+.dash-tab.active {
+    background: rgba(124, 58, 237, 0.18);
+    border-color: rgba(124, 58, 237, 0.4);
+    color: var(--neon-purple);
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.12);
+}
+
+/* Users List */
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.user-row {
+    background: rgba(17, 10, 28, 0.85);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.user-row:hover {
+    border-color: rgba(124, 58, 237, 0.3);
+}
+
+.user-row-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(124, 58, 237, 0.12);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--accent);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.user-row-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-row-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-row-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.user-row-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.user-row-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.user-tg {
+    color: #38bdf8;
+}
+
+.user-ip {
+    color: var(--text-muted);
+}
+
+.user-date {
+    color: var(--text-muted);
+}
+
+.user-row-actions {
+    flex-shrink: 0;
+}
+
+.pw-edit-btn {
+    padding: 0.5rem 0.85rem;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+.pw-edit-btn:hover {
+    background: rgba(124, 58, 237, 0.2);
+}
+
+.pw-edit-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.pw-edit-inline input {
+    padding: 0.45rem 0.7rem;
+    background: rgba(124, 58, 237, 0.06);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    outline: none;
+    width: 140px;
+}
+
+.pw-edit-inline input:focus {
+    border-color: var(--neon-purple);
+}
+
+.pw-save-btn,
+.pw-cancel-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.pw-save-btn {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #4ade80;
+}
+
+.pw-cancel-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.pw-msg {
+    font-size: 0.7rem;
+    color: var(--neon-green);
+    font-family: var(--font-mono);
+}
+
+@media (max-width: 768px) {
+    .user-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .user-row-actions {
+        width: 100%;
+    }
+
+    .pw-edit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pw-edit-inline {
+        width: 100%;
+    }
+
+    .pw-edit-inline input {
+        flex: 1;
+        width: auto;
+    }
+
+    .dash-tabs {
+        width: 100%;
+    }
+
+    .dash-tab {
+        flex: 1;
+        justify-content: center;
+    }
+}

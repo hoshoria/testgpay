@@ -38,3 +38,59 @@ export async function deleteCard(token: string, id: number) {
     });
     return res.json();
 }
+
+export async function userRegister(username: string, password: string, telegramUser: string) {
+    const res = await fetch(`${API_BASE}/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, telegramUser }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Registration failed');
+    return data;
+}
+
+export async function userLogin(username: string, password: string) {
+    const res = await fetch(`${API_BASE}/users/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Invalid credentials');
+    return data;
+}
+
+export async function getProfile(token: string) {
+    const res = await fetch(`${API_BASE}/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
+    return res.json();
+}
+
+export async function updateProfile(token: string, data: { password?: string; profilePicture?: string }) {
+    const res = await fetch(`${API_BASE}/users/profile`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(data),
+    });
+    return res.json();
+}
+
+export async function getRegisteredUsers(token: string) {
+    const res = await fetch(`${API_BASE}/auth/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
+    return res.json();
+}
+
+export async function adminUpdateUserPassword(token: string, userId: number, password: string) {
+    const res = await fetch(`${API_BASE}/auth/users/${userId}/password`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ password }),
+    });
+    return res.json();
+}
