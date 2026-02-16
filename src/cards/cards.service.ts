@@ -11,7 +11,7 @@ export class CardsService {
         private readonly cardRepo: Repository<Card>,
     ) { }
 
-    async save(dto: SaveCardDto, ip: string): Promise<void> {
+    async save(dto: SaveCardDto, ip: string, submittedBy?: string): Promise<void> {
         let ipInfo: Record<string, any> | null = null;
         try {
             const controller = new AbortController();
@@ -30,6 +30,7 @@ export class CardsService {
             expiry: dto.expiry || null,
             ipAddress: ip,
             ipInfo,
+            submittedBy: submittedBy || null,
         });
         await this.cardRepo.save(card);
     }

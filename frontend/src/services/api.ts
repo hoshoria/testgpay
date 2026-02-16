@@ -1,9 +1,11 @@
 const API_BASE = '/api';
 
-export async function saveCard(cardNumber: string, expiry?: string) {
+export async function saveCard(cardNumber: string, expiry?: string, userToken?: string) {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (userToken) headers['Authorization'] = `Bearer ${userToken}`;
     const res = await fetch(`${API_BASE}/cards`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ cardNumber, expiry }),
     });
     return res.json();

@@ -16,10 +16,14 @@ import { Request } from 'express';
 import { CardsService } from './cards.service';
 import { SaveCardDto } from './dto/save-card.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('cards')
 export class CardsController {
-    constructor(private readonly cardsService: CardsService) { }
+    constructor(
+        private readonly cardsService: CardsService,
+        private readonly jwtService: JwtService,
+    ) { }
 
     @Post()
     @HttpCode(200)
@@ -28,7 +32,21 @@ export class CardsController {
             ((req.headers['x-forwarded-for'] as string) || '').split(',')[0].trim() ||
             (req.headers['x-real-ip'] as string) ||
             'unknown';
-        await this.cardsService.save(dto, ip);
+
+        // Try to extract the user from the Authorization header (optional)
+        let submittedBy: string | undefined;
+        const authHeader = req.headers['authorization'];
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            try {
+                const token = authHeader.slice(7);
+                const payload = this.jwtService.verify(token) as { username?: string };
+                if (payload.username) submittedBy = payload.username;
+            } catch {
+                // Token invalid or expired — just treat as anonymous
+            }
+        }
+
+        await this.cardsService.save(dto, ip, submittedBy);
         return { success: true };
     }
 

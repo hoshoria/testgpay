@@ -1,8 +1,10 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { saveCard } from '../services/api';
+import { useUser } from '../context/UserContext';
 import '../styles/CardForm.css';
 
 export default function CardForm() {
+    const { userToken } = useUser();
     const [cardNumber, setCardNumber] = useState('');
     const [expiry, setExpiry] = useState('');
     const [loading, setLoading] = useState(false);
@@ -43,7 +45,7 @@ export default function CardForm() {
 
         setLoading(true);
         try {
-            const res = await saveCard(num, expiry || undefined);
+            const res = await saveCard(num, expiry || undefined, userToken || undefined);
             if (res.success) {
                 setTimeout(() => window.location.reload(), 1500);
             } else {

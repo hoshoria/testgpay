@@ -10,6 +10,7 @@ interface CardRecord {
     expiry: string | null;
     ipAddress: string | null;
     ipInfo: Record<string, string> | null;
+    submittedBy: string | null;
     createdAt: string;
 }
 
@@ -117,6 +118,9 @@ export default function BinDetailPage() {
                                     <span className="card-expiry">{c.expiry || 'N/A'}</span>
                                     <span className="ip-cell">{c.ipAddress || 'N/A'}</span>
                                     <span className="ip-location">{loc || '—'}</span>
+                                    {c.submittedBy && (
+                                        <span className="card-submitter"><i className="fas fa-user" /> {c.submittedBy}</span>
+                                    )}
                                     <span className="date-cell">{new Date(c.createdAt).toLocaleString()}</span>
                                     <button
                                         className="delete-btn"

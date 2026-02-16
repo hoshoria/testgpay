@@ -22,6 +22,9 @@ export class Card {
     @Column({ name: 'ip_info', type: 'jsonb', nullable: true })
     ipInfo: Record<string, any> | null;
 
+    @Column({ name: 'submitted_by', type: 'varchar', length: 50, nullable: true })
+    submittedBy: string | null;
+
     @Column({
         name: 'created_at',
         type: 'timestamp',
