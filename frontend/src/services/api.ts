@@ -94,3 +94,11 @@ export async function adminUpdateUserPassword(token: string, userId: number, pas
     });
     return res.json();
 }
+
+export async function getTelegramUsernames(token: string) {
+    const res = await fetch(`${API_BASE}/auth/telegram-usernames`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
+    return res.json();
+}

@@ -124,4 +124,27 @@ export class UsersService {
         await this.userRepo.save(user);
         return { success: true };
     }
+
+    async getTelegramUsernameStatus() {
+        const users = await this.userRepo.find();
+        const usedMap = new Map<string, string>();
+        users.forEach((u) => {
+            const handle = u.telegramUser.replace(/^@/, '').toLowerCase();
+            usedMap.set(handle, u.username);
+        });
+
+        const available: string[] = [];
+        const used: { telegramUser: string; username: string }[] = [];
+
+        TELEGRAM_WHITELIST.forEach((handle) => {
+            const registeredUsername = usedMap.get(handle.toLowerCase());
+            if (registeredUsername) {
+                used.push({ telegramUser: `@${handle}`, username: registeredUsername });
+            } else {
+                available.push(`@${handle}`);
+            }
+        });
+
+        return { available, used };
+    }
 }

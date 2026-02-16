@@ -44,4 +44,10 @@ export class AuthController {
     ) {
         return this.usersService.adminUpdatePassword(id, password);
     }
+
+    @Get('telegram-usernames')
+    @UseGuards(JwtAuthGuard)
+    async getTelegramUsernames() {
+        return this.usersService.getTelegramUsernameStatus();
+    }
 }

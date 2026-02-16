@@ -572,4 +572,217 @@
         flex: 1;
         justify-content: center;
     }
+
+    .tg-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   Telegram Usernames Section
+   ═══════════════════════════════════════════════ */
+
+.tg-available-value {
+    color: #4ade80 !important;
+    text-shadow: 0 0 15px rgba(74, 222, 128, 0.3) !important;
+}
+
+.tg-used-value {
+    color: #38bdf8 !important;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.3) !important;
+}
+
+.tg-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.tg-group {
+    background: rgba(17, 10, 28, 0.5);
+    border: 1px solid rgba(124, 58, 237, 0.12);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(12px);
+}
+
+.tg-group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+.tg-group-header h3 {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.tg-group-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.tg-group-icon.available {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: #4ade80;
+}
+
+.tg-group-icon.used {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: #38bdf8;
+}
+
+.tg-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 0.5rem;
+    background: rgba(124, 58, 237, 0.15);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: var(--font-mono);
+}
+
+.tg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.6rem;
+}
+
+.tg-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1.1rem;
+    background: rgba(10, 6, 18, 0.6);
+    border: 1px solid rgba(124, 58, 237, 0.1);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.tg-item:hover {
+    border-color: rgba(124, 58, 237, 0.25);
+    background: rgba(17, 10, 28, 0.8);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.06);
+}
+
+.tg-item.used {
+    border-left: 2px solid rgba(56, 189, 248, 0.4);
+}
+
+.tg-item.available {
+    border-left: 2px solid rgba(74, 222, 128, 0.3);
+}
+
+.tg-item-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.tg-item-icon.available {
+    background: rgba(74, 222, 128, 0.08);
+    color: #4ade80;
+}
+
+.tg-item-icon.used {
+    background: rgba(56, 189, 248, 0.08);
+    color: #38bdf8;
+}
+
+.tg-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tg-item-handle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text-primary);
+}
+
+.tg-item-user {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.tg-item-user i {
+    font-size: 0.65rem;
+    color: rgba(124, 58, 237, 0.5);
+}
+
+.tg-badge {
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.tg-badge.available {
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    color: #4ade80;
+}
+
+.tg-badge.used {
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+}
+
+.tg-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    opacity: 0.7;
 }

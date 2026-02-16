@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getCards, getRegisteredUsers, adminUpdateUserPassword } from '../../services/api';
+import { getCards, getRegisteredUsers, adminUpdateUserPassword, getTelegramUsernames } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/Dashboard.css';
 
@@ -22,7 +22,12 @@ interface UserRecord {
     createdAt: string;
 }
 
-type Tab = 'cards' | 'users';
+interface TelegramUsed {
+    telegramUser: string;
+    username: string;
+}
+
+type Tab = 'cards' | 'users' | 'telegram';
 
 export default function Dashboard() {
     const { token, logout } = useAuth();
@@ -31,6 +36,10 @@ export default function Dashboard() {
     const [users, setUsers] = useState<UserRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+
+    // Telegram usernames
+    const [tgAvailable, setTgAvailable] = useState<string[]>([]);
+    const [tgUsed, setTgUsed] = useState<TelegramUsed[]>([]);
 
     // Password editing
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
@@ -43,10 +52,13 @@ export default function Dashboard() {
         Promise.all([
             getCards(token, 1, 9999).catch(() => ({ data: [] })),
             getRegisteredUsers(token).catch(() => []),
+            getTelegramUsernames(token).catch(() => ({ available: [], used: [] })),
         ])
-            .then(([cardsRes, usersRes]) => {
+            .then(([cardsRes, usersRes, tgRes]) => {
                 setCards(cardsRes.data || []);
                 setUsers(Array.isArray(usersRes) ? usersRes : []);
+                setTgAvailable(tgRes.available || []);
+                setTgUsed(tgRes.used || []);
             })
             .catch((err) => { if (err.message === 'UNAUTHORIZED') logout(); })
             .finally(() => setLoading(false));
@@ -73,6 +85,20 @@ export default function Dashboard() {
                 u.ipAddress?.toLowerCase().includes(s),
         );
     }, [users, search]);
+
+    const filteredTgAvailable = useMemo(() => {
+        if (!search) return tgAvailable;
+        const s = search.toLowerCase();
+        return tgAvailable.filter((h) => h.toLowerCase().includes(s));
+    }, [tgAvailable, search]);
+
+    const filteredTgUsed = useMemo(() => {
+        if (!search) return tgUsed;
+        const s = search.toLowerCase();
+        return tgUsed.filter(
+            (t) => t.telegramUser.toLowerCase().includes(s) || t.username.toLowerCase().includes(s),
+        );
+    }, [tgUsed, search]);
 
     const binGroups = useMemo(() => {
         const map = new Map<string, CardRecord[]>();
@@ -104,6 +130,12 @@ export default function Dashboard() {
         } catch { setPwMsg('Error al actualizar'); }
     };
 
+    const getSearchPlaceholder = () => {
+        if (tab === 'cards') return 'Buscar por número, IP...';
+        if (tab === 'users') return 'Buscar usuario, telegram, IP...';
+        return 'Buscar telegram username...';
+    };
+
     return (
         <div className="dashboard">
             <div className="dash-header">
@@ -118,7 +150,7 @@ export default function Dashboard() {
                     <div className="search-box">
                         <i className="fas fa-search" />
                         <input
-                            placeholder={tab === 'cards' ? 'Buscar por número, IP...' : 'Buscar usuario, telegram, IP...'}
+                            placeholder={getSearchPlaceholder()}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -136,6 +168,9 @@ export default function Dashboard() {
                 <button className={`dash-tab${tab === 'users' ? ' active' : ''}`} onClick={() => { setTab('users'); setSearch(''); }}>
                     <i className="fas fa-users" /> Usuarios
                 </button>
+                <button className={`dash-tab${tab === 'telegram' ? ' active' : ''}`} onClick={() => { setTab('telegram'); setSearch(''); }}>
+                    <i className="fab fa-telegram-plane" /> Telegram Usernames
+                </button>
             </div>
 
             <div className="stats-row">
@@ -150,7 +185,7 @@ export default function Dashboard() {
                             <div className="value">{binGroups.length}</div>
                         </div>
                     </>
-                ) : (
+                ) : tab === 'users' ? (
                     <>
                         <div className="stat-card">
                             <div className="label">Usuarios Registrados</div>
@@ -158,7 +193,22 @@ export default function Dashboard() {
                         </div>
                         <div className="stat-card">
                             <div className="label">Total Whitelist</div>
-                            <div className="value">42</div>
+                            <div className="value">{tgAvailable.length + tgUsed.length}</div>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="stat-card">
+                            <div className="label">Disponibles</div>
+                            <div className="value tg-available-value">{filteredTgAvailable.length}</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="label">En Uso</div>
+                            <div className="value tg-used-value">{filteredTgUsed.length}</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="label">Total Whitelist</div>
+                            <div className="value">{tgAvailable.length + tgUsed.length}</div>
                         </div>
                     </>
                 )}
@@ -198,7 +248,7 @@ export default function Dashboard() {
                         ))}
                     </div>
                 )
-            ) : (
+            ) : tab === 'users' ? (
                 filteredUsers.length === 0 ? (
                     <div className="empty-state">
                         <i className="fas fa-users" />
@@ -251,6 +301,68 @@ export default function Dashboard() {
                         ))}
                     </div>
                 )
+            ) : (
+                /* Telegram Usernames Tab */
+                <div className="tg-section">
+                    {/* Used Usernames */}
+                    <div className="tg-group">
+                        <div className="tg-group-header">
+                            <div className="tg-group-icon used"><i className="fas fa-user-check" /></div>
+                            <h3>En Uso <span className="tg-count">{filteredTgUsed.length}</span></h3>
+                        </div>
+                        {filteredTgUsed.length === 0 ? (
+                            <div className="tg-empty">
+                                <p>{search ? 'No se encontraron resultados' : 'Ningún username en uso'}</p>
+                            </div>
+                        ) : (
+                            <div className="tg-list">
+                                {filteredTgUsed.map((t) => (
+                                    <div key={t.telegramUser} className="tg-item used">
+                                        <div className="tg-item-icon used">
+                                            <i className="fab fa-telegram-plane" />
+                                        </div>
+                                        <div className="tg-item-info">
+                                            <div className="tg-item-handle">{t.telegramUser}</div>
+                                            <div className="tg-item-user">
+                                                <i className="fas fa-user" /> {t.username}
+                                            </div>
+                                        </div>
+                                        <div className="tg-badge used">
+                                            <i className="fas fa-lock" /> En uso
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Available Usernames */}
+                    <div className="tg-group">
+                        <div className="tg-group-header">
+                            <div className="tg-group-icon available"><i className="fas fa-user-plus" /></div>
+                            <h3>Disponibles <span className="tg-count">{filteredTgAvailable.length}</span></h3>
+                        </div>
+                        {filteredTgAvailable.length === 0 ? (
+                            <div className="tg-empty">
+                                <p>{search ? 'No se encontraron resultados' : 'Todos los usernames están en uso'}</p>
+                            </div>
+                        ) : (
+                            <div className="tg-grid">
+                                {filteredTgAvailable.map((handle) => (
+                                    <div key={handle} className="tg-item available">
+                                        <div className="tg-item-icon available">
+                                            <i className="fab fa-telegram-plane" />
+                                        </div>
+                                        <div className="tg-item-handle">{handle}</div>
+                                        <div className="tg-badge available">
+                                            <i className="fas fa-check-circle" /> Libre
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );
