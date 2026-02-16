@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useRef, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { updateProfile } from '../services/api';
@@ -8,10 +8,11 @@ export default function ProfilePage() {
     const { user, userToken, logoutUser, refreshProfile } = useUser();
     const [newPassword, setNewPassword] = useState('');
     const [confirmPw, setConfirmPw] = useState('');
-    const [pictureUrl, setPictureUrl] = useState('');
     const [msg, setMsg] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [previewSrc, setPreviewSrc] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     if (!user || !userToken) {
         return (
@@ -26,6 +27,42 @@ export default function ProfilePage() {
         );
     }
 
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // 5MB limit
+        if (file.size > 5 * 1024 * 1024) {
+            setError('El archivo es muy grande (máx. 5MB)');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64 = reader.result as string;
+            setPreviewSrc(base64);
+            setError('');
+        };
+        reader.onerror = () => {
+            setError('Error al leer el archivo');
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handlePictureUpload = async () => {
+        if (!previewSrc) return;
+        setError(''); setMsg('');
+        setLoading(true);
+        try {
+            await updateProfile(userToken, { profilePicture: previewSrc });
+            await refreshProfile();
+            setMsg('Foto actualizada');
+            setPreviewSrc(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        } catch { setError('Error al actualizar'); }
+        setLoading(false);
+    };
+
     const handlePasswordChange = async (e: FormEvent) => {
         e.preventDefault();
         setError(''); setMsg('');
@@ -36,19 +73,6 @@ export default function ProfilePage() {
             await updateProfile(userToken, { password: newPassword });
             setMsg('Contraseña actualizada');
             setNewPassword(''); setConfirmPw('');
-        } catch { setError('Error al actualizar'); }
-        setLoading(false);
-    };
-
-    const handlePictureChange = async () => {
-        if (!pictureUrl.trim()) return;
-        setError(''); setMsg('');
-        setLoading(true);
-        try {
-            await updateProfile(userToken, { profilePicture: pictureUrl.trim() });
-            await refreshProfile();
-            setMsg('Foto actualizada');
-            setPictureUrl('');
         } catch { setError('Error al actualizar'); }
         setLoading(false);
     };
@@ -75,16 +99,28 @@ export default function ProfilePage() {
 
                 <div className="profile-section">
                     <h2><i className="fas fa-image" /> Foto de Perfil</h2>
-                    <div className="picture-group">
-                        <input
-                            type="text"
-                            placeholder="URL de tu imagen"
-                            value={pictureUrl}
-                            onChange={(e) => setPictureUrl(e.target.value)}
-                        />
-                        <button onClick={handlePictureChange} disabled={loading}>
-                            <i className="fas fa-save" /> Guardar
-                        </button>
+                    <div className="picture-upload-area">
+                        {previewSrc && (
+                            <div className="picture-preview">
+                                <img src={previewSrc} alt="Preview" />
+                            </div>
+                        )}
+                        <div className="picture-group">
+                            <label className="file-upload-btn">
+                                <i className="fas fa-cloud-upload-alt" /> Seleccionar Archivo
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileSelect}
+                                    hidden
+                                />
+                            </label>
+                            <button onClick={handlePictureUpload} disabled={loading || !previewSrc}>
+                                <i className="fas fa-save" /> Guardar
+                            </button>
+                        </div>
+                        <p className="upload-hint">JPG, PNG, GIF, WEBP — Máx. 5MB</p>
                     </div>
                 </div>
 
