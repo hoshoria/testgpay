@@ -104,3 +104,43 @@ export async function getTelegramUsernames(token: string) {
     if (res.status === 401) throw new Error('UNAUTHORIZED');
     return res.json();
 }
+
+export async function deleteUser(token: string, userId: number) {
+    const res = await fetch(`${API_BASE}/users/${userId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error('Failed to delete user');
+    return res.json();
+}
+
+export async function blockTelegramUser(token: string, telegramUser: string) {
+    const res = await fetch(`${API_BASE}/users/telegram/block`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ telegramUser }),
+    });
+    if (!res.ok) throw new Error('Failed to block user');
+    return res.json();
+}
+
+export async function unblockTelegramUser(token: string, handle: string) {
+    const safeHandle = encodeURIComponent(handle);
+    const res = await fetch(`${API_BASE}/users/telegram/block/${safeHandle}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error('Failed to unblock user');
+    return res.json();
+}
+
+export async function getUserLoginHistory(token: string, userId: number) {
+    const res = await fetch(`${API_BASE}/users/${userId}/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error('Failed to get login history');
+    return res.json();
+}

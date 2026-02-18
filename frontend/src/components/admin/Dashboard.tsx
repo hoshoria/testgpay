@@ -1,6 +1,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getCards, getRegisteredUsers, adminUpdateUserPassword, getTelegramUsernames } from '../../services/api';
+import {
+    getCards,
+    getRegisteredUsers,
+    adminUpdateUserPassword,
+    getTelegramUsernames,
+    deleteUser,
+    blockTelegramUser,
+    unblockTelegramUser,
+    getUserLoginHistory
+} from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/Dashboard.css';
 
@@ -28,6 +37,19 @@ interface TelegramUsed {
     username: string;
 }
 
+interface LoginHistoryItem {
+    id: number;
+    ipAddress: string;
+    userAgent: string;
+    deviceInfo: {
+        browser?: string;
+        os?: string;
+        device?: string;
+        cpu?: string;
+    };
+    loginTime: string;
+}
+
 type Tab = 'cards' | 'users' | 'telegram';
 
 export default function Dashboard() {
@@ -44,28 +66,39 @@ export default function Dashboard() {
     // Telegram usernames
     const [tgAvailable, setTgAvailable] = useState<string[]>([]);
     const [tgUsed, setTgUsed] = useState<TelegramUsed[]>([]);
+    const [tgBlocked, setTgBlocked] = useState<string[]>([]);
 
     // Password editing
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
     const [newPw, setNewPw] = useState('');
     const [pwMsg, setPwMsg] = useState('');
 
-    useEffect(() => {
+    // Login History
+    const [viewingHistoryId, setViewingHistoryId] = useState<number | null>(null);
+    const [loginHistory, setLoginHistory] = useState<LoginHistoryItem[]>([]);
+    const [historyLoading, setHistoryLoading] = useState(false);
+
+    const loadData = () => {
         if (!token) return;
         setLoading(true);
         Promise.all([
             getCards(token, 1, 9999).catch(() => ({ data: [] })),
             getRegisteredUsers(token).catch(() => []),
-            getTelegramUsernames(token).catch(() => ({ available: [], used: [] })),
+            getTelegramUsernames(token).catch(() => ({ available: [], used: [], blocked: [] })),
         ])
             .then(([cardsRes, usersRes, tgRes]) => {
                 setCards(cardsRes.data || []);
                 setUsers(Array.isArray(usersRes) ? usersRes : []);
                 setTgAvailable(tgRes.available || []);
                 setTgUsed(tgRes.used || []);
+                setTgBlocked(tgRes.blocked || []);
             })
             .catch((err) => { if (err.message === 'UNAUTHORIZED') logout(); })
             .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        loadData();
     }, [token, logout]);
 
     // Get unique submitters for filter dropdown
@@ -118,6 +151,12 @@ export default function Dashboard() {
         );
     }, [tgUsed, search]);
 
+    const filteredTgBlocked = useMemo(() => {
+        if (!search) return tgBlocked;
+        const s = search.toLowerCase();
+        return tgBlocked.filter((h) => h.toLowerCase().includes(s));
+    }, [tgBlocked, search]);
+
     const binGroups = useMemo(() => {
         const map = new Map<string, CardRecord[]>();
         filtered.forEach((c) => {
@@ -146,6 +185,55 @@ export default function Dashboard() {
             setNewPw('');
             setTimeout(() => { setEditingUserId(null); setPwMsg(''); }, 1500);
         } catch { setPwMsg('Error al actualizar'); }
+    };
+
+    const handleDeleteUser = async (userId: number) => {
+        if (!token || !window.confirm('¿Estás seguro de eliminar este usuario? Su username de Telegram volverá a estar disponible.')) return;
+        try {
+            await deleteUser(token, userId);
+            loadData();
+        } catch (e) {
+            alert('Error al eliminar usuario');
+        }
+    };
+
+    const handleBlockTg = async (handle: string) => {
+        if (!token) return;
+        try {
+            await blockTelegramUser(token, handle);
+            loadData();
+        } catch (e) {
+            alert('Error al bloquear usuario');
+        }
+    }
+
+    const handleUnblockTg = async (handle: string) => {
+        if (!token) return;
+        try {
+            await unblockTelegramUser(token, handle);
+            loadData();
+        } catch (e) {
+            alert('Error al desbloquear usuario');
+        }
+    }
+
+    const onViewHistory = async (userId: number) => {
+        if (viewingHistoryId === userId) {
+            setViewingHistoryId(null);
+            setLoginHistory([]);
+            return;
+        }
+        setViewingHistoryId(userId);
+        setHistoryLoading(true);
+        if (!token) return;
+        try {
+            const hist = await getUserLoginHistory(token, userId);
+            setLoginHistory(hist);
+        } catch {
+            setLoginHistory([]);
+        } finally {
+            setHistoryLoading(false);
+        }
     };
 
     const getSearchPlaceholder = () => {
@@ -243,7 +331,7 @@ export default function Dashboard() {
                         </div>
                         <div className="stat-card">
                             <div className="label">Total Whitelist</div>
-                            <div className="value">{tgAvailable.length + tgUsed.length}</div>
+                            <div className="value">{tgAvailable.length + tgUsed.length + tgBlocked.length}</div>
                         </div>
                     </>
                 ) : (
@@ -257,8 +345,8 @@ export default function Dashboard() {
                             <div className="value tg-used-value">{filteredTgUsed.length}</div>
                         </div>
                         <div className="stat-card">
-                            <div className="label">Total Whitelist</div>
-                            <div className="value">{tgAvailable.length + tgUsed.length}</div>
+                            <div className="label">Bloqueados</div>
+                            <div className="value" style={{ color: '#ef4444' }}>{filteredTgBlocked.length}</div>
                         </div>
                     </>
                 )}
@@ -322,46 +410,95 @@ export default function Dashboard() {
                 ) : (
                     <div className="users-list">
                         {filteredUsers.map((u) => (
-                            <div key={u.id} className="user-row">
-                                <div className="user-row-avatar">
-                                    {u.profilePicture ? (
-                                        <img src={u.profilePicture} alt="" />
-                                    ) : (
-                                        <i className="fas fa-user" />
-                                    )}
-                                </div>
-                                <div className="user-row-info">
-                                    <div className="user-row-name">{u.username}</div>
-                                    <div className="user-row-meta">
-                                        <span className="user-tg"><i className="fab fa-telegram-plane" /> {u.telegramUser}</span>
-                                        <span className="user-ip"><i className="fas fa-globe" /> {u.ipAddress || 'N/A'}</span>
-                                        <span className="user-date"><i className="fas fa-clock" /> {new Date(u.createdAt).toLocaleDateString()}</span>
+                            <div key={u.id} className="user-row-container">
+                                <div className="user-row">
+                                    <div className="user-row-avatar">
+                                        {u.profilePicture ? (
+                                            <img src={u.profilePicture} alt="" />
+                                        ) : (
+                                            <i className="fas fa-user" />
+                                        )}
+                                    </div>
+                                    <div className="user-row-info">
+                                        <div className="user-row-name">{u.username}</div>
+                                        <div className="user-row-meta">
+                                            <span className="user-tg"><i className="fab fa-telegram-plane" /> {u.telegramUser}</span>
+                                            <span className="user-ip"><i className="fas fa-globe" /> {u.ipAddress || 'N/A'}</span>
+                                            <span className="user-date"><i className="fas fa-clock" /> {new Date(u.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                    <div className="user-row-actions">
+                                        <button
+                                            className="action-btn history-btn"
+                                            title="Ver historial de login"
+                                            onClick={() => onViewHistory(u.id)}
+                                        >
+                                            <i className="fas fa-history" />
+                                        </button>
+
+                                        {editingUserId === u.id ? (
+                                            <div className="pw-edit-inline">
+                                                <input
+                                                    type="password"
+                                                    placeholder="Nueva contraseña"
+                                                    value={newPw}
+                                                    onChange={(e) => setNewPw(e.target.value)}
+                                                    autoFocus
+                                                />
+                                                <button className="pw-save-btn" onClick={() => handleUpdatePassword(u.id)}>
+                                                    <i className="fas fa-check" />
+                                                </button>
+                                                <button className="pw-cancel-btn" onClick={() => { setEditingUserId(null); setNewPw(''); setPwMsg(''); }}>
+                                                    <i className="fas fa-times" />
+                                                </button>
+                                                {pwMsg && <span className="pw-msg">{pwMsg}</span>}
+                                            </div>
+                                        ) : (
+                                            <button className="pw-edit-btn" onClick={() => { setEditingUserId(u.id); setNewPw(''); setPwMsg(''); }}>
+                                                <i className="fas fa-key" /> Cambiar contraseña
+                                            </button>
+                                        )}
+
+                                        <button
+                                            className="action-btn delete-btn"
+                                            title="Eliminar usuario"
+                                            onClick={() => handleDeleteUser(u.id)}
+                                        >
+                                            <i className="fas fa-trash" />
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="user-row-actions">
-                                    {editingUserId === u.id ? (
-                                        <div className="pw-edit-inline">
-                                            <input
-                                                type="password"
-                                                placeholder="Nueva contraseña"
-                                                value={newPw}
-                                                onChange={(e) => setNewPw(e.target.value)}
-                                                autoFocus
-                                            />
-                                            <button className="pw-save-btn" onClick={() => handleUpdatePassword(u.id)}>
-                                                <i className="fas fa-check" />
-                                            </button>
-                                            <button className="pw-cancel-btn" onClick={() => { setEditingUserId(null); setNewPw(''); setPwMsg(''); }}>
-                                                <i className="fas fa-times" />
-                                            </button>
-                                            {pwMsg && <span className="pw-msg">{pwMsg}</span>}
-                                        </div>
-                                    ) : (
-                                        <button className="pw-edit-btn" onClick={() => { setEditingUserId(u.id); setNewPw(''); setPwMsg(''); }}>
-                                            <i className="fas fa-key" /> Cambiar contraseña
-                                        </button>
-                                    )}
-                                </div>
+                                {viewingHistoryId === u.id && (
+                                    <div className="login-history-panel">
+                                        <h4>Historial de accesos</h4>
+                                        {historyLoading ? (
+                                            <p><i className="fas fa-spinner fa-spin" /> Cargando...</p>
+                                        ) : loginHistory.length === 0 ? (
+                                            <p>No hay historial disponible.</p>
+                                        ) : (
+                                            <table className="history-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Fecha</th>
+                                                        <th>IP</th>
+                                                        <th>Dispositivo</th>
+                                                        <th>Navegador</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {loginHistory.map((h) => (
+                                                        <tr key={h.id}>
+                                                            <td>{new Date(h.loginTime).toLocaleString()}</td>
+                                                            <td>{h.ipAddress}</td>
+                                                            <td>{h.deviceInfo?.device !== 'undefined' ? h.deviceInfo?.device : 'PC'} ({h.deviceInfo?.os})</td>
+                                                            <td>{h.deviceInfo?.browser}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -369,6 +506,40 @@ export default function Dashboard() {
             ) : (
                 /* Telegram Usernames Tab */
                 <div className="tg-section">
+
+                    {/* Blocked Usernames */}
+                    <div className="tg-group">
+                        <div className="tg-group-header">
+                            <div className="tg-group-icon blocked" style={{ background: '#ef444433', color: '#ef4444' }}><i className="fas fa-ban" /></div>
+                            <h3>Bloqueados <span className="tg-count">{filteredTgBlocked.length}</span></h3>
+                        </div>
+                        {filteredTgBlocked.length === 0 ? (
+                            <div className="tg-empty">
+                                <p>{search ? 'No se encontraron resultados' : 'No hay usernames bloqueados'}</p>
+                            </div>
+                        ) : (
+                            <div className="tg-list">
+                                {filteredTgBlocked.map((handle) => (
+                                    <div key={handle} className="tg-item blocked" style={{ borderLeft: '3px solid #ef4444' }}>
+                                        <div className="tg-item-icon blocked" style={{ color: '#ef4444' }}>
+                                            <i className="fas fa-ban" />
+                                        </div>
+                                        <div className="tg-item-handle">{handle}</div>
+                                        <div className="tg-actions">
+                                            <button
+                                                className="tg-action-btn unblock"
+                                                onClick={() => handleUnblockTg(handle)}
+                                                title="Desbloquear"
+                                            >
+                                                <i className="fas fa-unlock" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                     {/* Used Usernames */}
                     <div className="tg-group">
                         <div className="tg-group-header">
@@ -409,7 +580,7 @@ export default function Dashboard() {
                         </div>
                         {filteredTgAvailable.length === 0 ? (
                             <div className="tg-empty">
-                                <p>{search ? 'No se encontraron resultados' : 'Todos los usernames están en uso'}</p>
+                                <p>{search ? 'No se encontraron resultados' : 'Todos los usernames están en uso o bloqueados'}</p>
                             </div>
                         ) : (
                             <div className="tg-grid">
@@ -419,6 +590,15 @@ export default function Dashboard() {
                                             <i className="fab fa-telegram-plane" />
                                         </div>
                                         <div className="tg-item-handle">{handle}</div>
+                                        <div className="tg-actions-overlay">
+                                            <button
+                                                className="tg-action-btn block"
+                                                onClick={() => handleBlockTg(handle)}
+                                                title="Bloquear"
+                                            >
+                                                <i className="fas fa-ban" /> Bloquear
+                                            </button>
+                                        </div>
                                         <div className="tg-badge available">
                                             <i className="fas fa-check-circle" /> Libre
                                         </div>

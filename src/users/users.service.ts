@@ -8,7 +8,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { UAParser } from 'ua-parser-js';
 import { User } from './user.entity';
+import { BlockedTelegramUser } from './blocked-user.entity';
+import { LoginHistory } from './login-history.entity';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
@@ -29,16 +32,25 @@ export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+        @InjectRepository(BlockedTelegramUser)
+        private readonly blockedRepo: Repository<BlockedTelegramUser>,
+        @InjectRepository(LoginHistory)
+        private readonly loginHistoryRepo: Repository<LoginHistory>,
         private readonly jwtService: JwtService,
     ) { }
 
     async register(dto: RegisterDto, ip: string) {
+        // Strict case check
+        if (!TELEGRAM_WHITELIST.includes(dto.telegramUser.replace(/^@/, ''))) {
+            throw new BadRequestException('Telegram user not in whitelist (Match Case)');
+        }
+
         const handle = dto.telegramUser.replace(/^@/, '');
-        const isWhitelisted = TELEGRAM_WHITELIST.some(
-            (w) => w.toLowerCase() === handle.toLowerCase(),
-        );
-        if (!isWhitelisted) {
-            throw new BadRequestException('Telegram user not in whitelist');
+
+        // Check if blocked
+        const blocked = await this.blockedRepo.findOne({ where: { telegramUser: handle } });
+        if (blocked) {
+            throw new BadRequestException('Telegram user is blocked');
         }
 
         const existingTg = await this.userRepo.findOne({
@@ -68,11 +80,33 @@ export class UsersService {
         return { success: true, token: this.jwtService.sign(payload) };
     }
 
-    async login(username: string, password: string) {
+    async login(username: string, password: string, ip: string, userAgent: string) {
         const user = await this.userRepo.findOne({ where: { username } });
         if (!user) return null;
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
+
+        // Record Login History
+        try {
+            const parser = new UAParser(userAgent);
+            const result = parser.getResult();
+            const deviceInfo = {
+                browser: result.browser.name,
+                os: result.os.name,
+                device: result.device.model || 'PC',
+                cpu: result.cpu.architecture
+            };
+
+            const history = this.loginHistoryRepo.create({
+                userId: user.id,
+                ipAddress: ip,
+                userAgent: userAgent,
+                deviceInfo: deviceInfo,
+            });
+            await this.loginHistoryRepo.save(history);
+        } catch (e) {
+            console.error('Error saving login history', e);
+        }
 
         const payload = { userId: user.id, username: user.username, role: 'user' };
         return { success: true, token: this.jwtService.sign(payload) };
@@ -117,6 +151,15 @@ export class UsersService {
         }));
     }
 
+    async deleteUser(userId: number) {
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException('User not found');
+        // Deleting the user automatically releases the telegram username because it's just a column in the user table.
+        // We just need to delete the row.
+        await this.userRepo.remove(user);
+        return { success: true };
+    }
+
     async adminUpdatePassword(userId: number, newPassword: string) {
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (!user) throw new NotFoundException('User not found');
@@ -127,6 +170,9 @@ export class UsersService {
 
     async getTelegramUsernameStatus() {
         const users = await this.userRepo.find();
+        const blocked = await this.blockedRepo.find();
+        const blockedSet = new Set(blocked.map(b => b.telegramUser.toLowerCase()));
+
         const usedMap = new Map<string, string>();
         users.forEach((u) => {
             const handle = u.telegramUser.replace(/^@/, '').toLowerCase();
@@ -135,16 +181,54 @@ export class UsersService {
 
         const available: string[] = [];
         const used: { telegramUser: string; username: string }[] = [];
+        const blockedList: string[] = [];
 
         TELEGRAM_WHITELIST.forEach((handle) => {
-            const registeredUsername = usedMap.get(handle.toLowerCase());
-            if (registeredUsername) {
+            const lower = handle.toLowerCase();
+            const registeredUsername = usedMap.get(lower);
+
+            if (blockedSet.has(lower)) {
+                blockedList.push(`@${handle}`);
+            } else if (registeredUsername) {
                 used.push({ telegramUser: `@${handle}`, username: registeredUsername });
             } else {
                 available.push(`@${handle}`);
             }
         });
 
-        return { available, used };
+        return { available, used, blocked: blockedList };
+    }
+
+    async blockTelegramUser(handle: string) {
+        // Strip @ if present
+        const cleanHandle = handle.replace(/^@/, '');
+        // Case insensitive check if it's in whitelist to ensure valid handle?
+        // Actually, user said "block A telegramusername", usually implies one from the list.
+        // I will just save it as is (lowercase for consistency if desired, but user asked for exact match elsewhere).
+        // For blocking, usually we want to block the identity regardless of case, but let's stick to the handle string.
+        // Best to store it lowercase for robust blocking check.
+        const existing = await this.blockedRepo.findOne({ where: { telegramUser: cleanHandle } });
+        if (existing) return { success: true }; // Already blocked
+
+        const blocked = this.blockedRepo.create({ telegramUser: cleanHandle });
+        await this.blockedRepo.save(blocked);
+        return { success: true };
+    }
+
+    async unblockTelegramUser(handle: string) {
+        const cleanHandle = handle.replace(/^@/, '');
+        const existing = await this.blockedRepo.findOne({ where: { telegramUser: cleanHandle } });
+        if (existing) {
+            await this.blockedRepo.remove(existing);
+        }
+        return { success: true };
+    }
+
+    async getUserLoginHistory(userId: number) {
+        return this.loginHistoryRepo.find({
+            where: { userId },
+            order: { loginTime: 'DESC' },
+            take: 10,
+        });
     }
 }
