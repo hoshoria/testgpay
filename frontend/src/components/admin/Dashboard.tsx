@@ -433,7 +433,7 @@ export default function Dashboard() {
                                             title="Ver historial de login"
                                             onClick={() => onViewHistory(u.id)}
                                         >
-                                            <i className="fas fa-history" />
+                                            <i className="fas fa-history" /> Historial
                                         </button>
 
                                         {editingUserId === u.id ? (
@@ -464,7 +464,7 @@ export default function Dashboard() {
                                             title="Eliminar usuario"
                                             onClick={() => handleDeleteUser(u.id)}
                                         >
-                                            <i className="fas fa-trash" />
+                                            <i className="fas fa-trash" /> Eliminar
                                         </button>
                                     </div>
                                 </div>
@@ -531,7 +531,7 @@ export default function Dashboard() {
                                                 onClick={() => handleUnblockTg(handle)}
                                                 title="Desbloquear"
                                             >
-                                                <i className="fas fa-unlock" />
+                                                <i className="fas fa-unlock" /> Desbloquear
                                             </button>
                                         </div>
                                     </div>
