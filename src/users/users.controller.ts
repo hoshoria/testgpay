@@ -59,12 +59,6 @@ export class UsersController {
         return this.usersService.updateProfile(user.userId, dto);
     }
 
-    @Delete(':id')
-    @UseGuards(JwtAuthGuard)
-    async deleteUser(@Param('id') id: string) {
-        return this.usersService.deleteUser(+id);
-    }
-
     @Post('telegram/block')
     @UseGuards(JwtAuthGuard)
     async blockTelegramUser(@Body() body: { telegramUser: string }) {
@@ -81,6 +75,12 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     async addTelegramUsername(@Body() body: { telegramUser: string }) {
         return this.usersService.addTelegramUsername(body.telegramUser);
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard)
+    async deleteUser(@Param('id') id: string) {
+        return this.usersService.deleteUser(+id);
     }
 
     @Get(':id/history')

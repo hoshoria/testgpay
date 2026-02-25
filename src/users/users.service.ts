@@ -24,7 +24,7 @@ let TELEGRAM_WHITELIST = [
     'Dlowbat', 'chipox43', 'loveFamas', 'JCardenass', 'nobacrono',
     'ByCracker2', 'DavMi04', 'Elmer3623', 'La_thepy', 'JKLPT99',
     'Binners_7', 'MILENITA01', 'marinero12', 'Robertoov11', 'Dark_Play503',
-    'Ossyok', 'luvjuns', 'Imaria1',
+    'Ossyok', 'luvjuns', 'Imaria1', 'songhaew',
 ];
 
 @Injectable()
