@@ -641,9 +641,7 @@ export default function Dashboard() {
                                                 <i className="fas fa-ban" /> Bloquear
                                             </button>
                                         </div>
-                                        <div className="tg-badge available">
-                                            <i className="fas fa-check-circle" /> Libre
-                                        </div>
+
                                     </div>
                                 ))}
                             </div>
