@@ -144,3 +144,19 @@ export async function getUserLoginHistory(token: string, userId: number) {
     if (!res.ok) throw new Error('Failed to get login history');
     return res.json();
 }
+
+export async function addTelegramUsername(token: string, telegramUser: string) {
+    const res = await fetch(`${API_BASE}/users/telegram/add`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ telegramUser }),
+    });
+    if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to add username');
+    }
+    return res.json();
+}

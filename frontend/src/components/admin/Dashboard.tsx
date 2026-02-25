@@ -8,7 +8,8 @@ import {
     deleteUser,
     blockTelegramUser,
     unblockTelegramUser,
-    getUserLoginHistory
+    getUserLoginHistory,
+    addTelegramUsername
 } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/Dashboard.css';
@@ -77,6 +78,10 @@ export default function Dashboard() {
     const [viewingHistoryId, setViewingHistoryId] = useState<number | null>(null);
     const [loginHistory, setLoginHistory] = useState<LoginHistoryItem[]>([]);
     const [historyLoading, setHistoryLoading] = useState(false);
+
+    // Add Telegram Username
+    const [newTgUsername, setNewTgUsername] = useState('');
+    const [addTgMsg, setAddTgMsg] = useState('');
 
     const loadData = () => {
         if (!token) return;
@@ -174,7 +179,7 @@ export default function Dashboard() {
                     items[0]?.createdAt || '',
                 ),
             }))
-            .sort((a, b) => a.bin.localeCompare(b.bin));
+            .sort((a, b) => b.count - a.count);
     }, [filtered]);
 
     const handleUpdatePassword = async (userId: number) => {
@@ -206,6 +211,20 @@ export default function Dashboard() {
             alert('Error al bloquear usuario');
         }
     }
+
+    const handleAddTgUsername = async () => {
+        if (!token || !newTgUsername.trim()) return;
+        try {
+            await addTelegramUsername(token, newTgUsername.trim());
+            setAddTgMsg(`@${newTgUsername.trim()} agregado`);
+            setNewTgUsername('');
+            loadData();
+            setTimeout(() => setAddTgMsg(''), 2500);
+        } catch (e: any) {
+            setAddTgMsg(e.message || 'Error al agregar');
+            setTimeout(() => setAddTgMsg(''), 2500);
+        }
+    };
 
     const handleUnblockTg = async (handle: string) => {
         if (!token) return;
@@ -506,6 +525,29 @@ export default function Dashboard() {
             ) : (
                 /* Telegram Usernames Tab */
                 <div className="tg-section">
+
+                    {/* Add Username Form */}
+                    <div className="tg-add-form">
+                        <div className="tg-add-form-header">
+                            <div className="tg-group-icon available"><i className="fas fa-plus" /></div>
+                            <h3>Agregar Username</h3>
+                        </div>
+                        <div className="tg-add-form-body">
+                            <input
+                                type="text"
+                                placeholder="Telegram username (sin @)"
+                                value={newTgUsername}
+                                onChange={(e) => setNewTgUsername(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleAddTgUsername()}
+                                className="tg-add-input"
+                            />
+                            <button className="tg-add-btn" onClick={handleAddTgUsername} disabled={!newTgUsername.trim()}>
+                                <i className="fas fa-plus" /> Agregar
+                            </button>
+                            {addTgMsg && <span className="tg-add-msg">{addTgMsg}</span>}
+                        </div>
+                    </div>
+
 
                     {/* Blocked Usernames */}
                     <div className="tg-group">

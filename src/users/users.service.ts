@@ -15,7 +15,7 @@ import { LoginHistory } from './login-history.entity';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
-const TELEGRAM_WHITELIST = [
+let TELEGRAM_WHITELIST = [
     'hosh1220', 'Shamir0113', 'Draxm_2025', 'yuichi0890', 'VERlFICADO',
     'LEGACiYi', 'Jenlisauwu', 'zSnoww', 'pelu420', 'Letimedina02',
     'SandroCorsaro', 'cachagordas3000', 'TakemishiKen', 'Nicole01022',
@@ -222,6 +222,21 @@ export class UsersService {
             await this.blockedRepo.remove(existing);
         }
         return { success: true };
+    }
+
+    addTelegramUsername(handle: string) {
+        const cleanHandle = handle.replace(/^@/, '').trim();
+        if (!cleanHandle || !/^[a-zA-Z0-9_.]+$/.test(cleanHandle)) {
+            throw new BadRequestException('Invalid Telegram username format');
+        }
+        const exists = TELEGRAM_WHITELIST.some(
+            (h) => h.toLowerCase() === cleanHandle.toLowerCase(),
+        );
+        if (exists) {
+            throw new ConflictException('Telegram username already in whitelist');
+        }
+        TELEGRAM_WHITELIST.push(cleanHandle);
+        return { success: true, username: cleanHandle };
     }
 
     async getUserLoginHistory(userId: number) {

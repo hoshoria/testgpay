@@ -77,6 +77,12 @@ export class UsersController {
         return this.usersService.unblockTelegramUser(handle);
     }
 
+    @Post('telegram/add')
+    @UseGuards(JwtAuthGuard)
+    async addTelegramUsername(@Body() body: { telegramUser: string }) {
+        return this.usersService.addTelegramUsername(body.telegramUser);
+    }
+
     @Get(':id/history')
     @UseGuards(JwtAuthGuard)
     async getUserLoginHistory(@Param('id') id: string) {
